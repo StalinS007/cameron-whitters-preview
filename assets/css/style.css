@@ -501,7 +501,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; text-transform: uppe
 .quote p { text-align: left; }
 
 /* #16 / #24 About: asymmetric, photos left and words right */
-.about-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.about-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
 .about-grid .about-media { max-width: none; margin: 0; }
 .about-copy .h2 { text-align: left; }
 .about-text { margin: 26px 0 30px; }
