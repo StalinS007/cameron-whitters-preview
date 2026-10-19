@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="origin">
+  <!-- Added: real consent adapter (window.CWConsent), resolved synchronously before the module below imports bootstrap. -->
+  <script src="../assets/js/consent.js?v=20261019d"></script>
+  <title>Apply to Work With Cameron</title>
+  <meta name="description" content="Apply for a private six-month physique and performance transformation with Cameron Whitters.">
+  <link rel="stylesheet" href="https://embed.typeform.com/next/css/widget.css">
+  <style>
+    :root { color-scheme: dark; font-family: Arial, sans-serif; background: #121212; color: #f4f0e7; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { max-width: 1180px; margin: auto; padding: 24px; border-bottom: 1px solid #34312b; }
+    header a { color: #d3bb84; text-decoration: none; font-size: 14px; letter-spacing: .1em; }
+    main { width: 100%; max-width: 1180px; margin: auto; }
+    #application { width: 100%; min-height: 720px; height: calc(100dvh - 80px); }
+    #status { padding: 1rem 24px; color: #d3bb84; }
+    #status:empty { display: none; }
+    .fallback { padding: 24px; }
+    .fallback a { color: #d3bb84; }
+    .cw-cookie-link { padding: 10px 24px 24px; font-size: 12px; color: #8d887f; }
+    .cw-cookie-link a { color: #8d887f; }
+    @media (max-width: 600px) { header { padding: 18px; } #application { min-height: 640px; height: calc(100dvh - 60px); } }
+  </style>
+</head>
+<body>
+  <header><a href="../">CAMERON WHITTERS</a></header>
+  <main>
+    <div id="status" role="status" aria-live="polite"></div>
+    <div id="application" aria-label="Private Executive Transformation application"></div>
+    <noscript><p class="fallback">JavaScript is required for the embedded application. <a href="https://rll9wh9lcjp.typeform.com/to/epGkkctg" rel="noreferrer">Open the application</a>.</p></noscript>
+    <p class="cw-cookie-link"><a href="#" data-cookie-settings>Cookie settings</a> · <a href="../privacy/">Privacy</a></p>
+  </main>
+  <script type="module">
+    import { attribution } from '../cw-site-bootstrap.mjs';
+    import { mountApplication } from '../cw-application.mjs';
+    import { hostConfig } from '../host-config.mjs';
+    const status = document.querySelector('#status');
+    try {
+      await new Promise((resolve, reject) => {
+        if (window.tf?.createWidget) return resolve();
+        const script = document.createElement('script');
+        script.src = 'https://embed.typeform.com/next/embed.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.append(script);
+      });
+      mountApplication({
+        createWidget: window.tf.createWidget,
+        container: document.querySelector('#application'),
+        attribution,
+        formId: hostConfig.formId,
+        enableMetaSubmission: hostConfig.enableMetaSubmission,
+        onDiagnostic: ({ code }) => {
+          console.warn('[CW application]', code);
+          if (code === 'consent_revoked_form_restarted') {
+            status.textContent = 'Your privacy preference changed. The application has restarted without advertising attribution.';
+          }
+        },
+      });
+      // Added: the site's consent-controlled Pixel starts only after bootstrap has captured and cleaned the URL.
+      window.CWReleasePixel && window.CWReleasePixel();
+    } catch {
+      status.textContent = 'The application could not load. Please refresh this page or try again shortly.';
+    }
+  </script>
+</body>
+</html>
