@@ -51,6 +51,10 @@
     15: { sel: ".vsl", pos: "inside", t: "VSL thumbnail caption", s: "check",
           ask: "(Stalin) Drop 'Cameron Whitters explains the six-month engagement.' and sign it off as Cameron instead.",
           did: "Thumbnail re-rendered: the sentence is gone, replaced by '\u2014 Cameron Whitters'." },
+    16: { sel: ".cred-strip div:nth-child(3)", t: "'Direct private coaching' replaced", s: "check",
+          ask: "(Stalin) Replace 'Direct private coaching' with 'Private executive transformation', 'Managed by Cameron' underneath.",
+          before: "Direct private coaching · Managed by Cameron",
+          did: "Now 'Private executive transformation · Managed by Cameron'." },
   };
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Cameron's feedback · 19 Oct";
