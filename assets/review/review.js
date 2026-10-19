@@ -26,7 +26,7 @@
           removed: "Removed: “Client photographs, shared with consent. Results vary.”" },
     7:  { sel: ".quotes-head", t: "All written testimonials in", s: "check",
           ask: "8 testimonials in the Google Drive doc (one still coming from a client).",
-          did: "All 8 in, as a swipe strip headed Testimonials: Josh, Donnie, Riccardo, Meylad, Oliver, Jourdon, Michael, Sam. Excerpts trimmed from your doc, in their own words; Michael's reworded from 'you' to 'Cam'. OK to publish?" },
+          did: "All 8 in, under the heading Testimonials. Each identified person's transformation photo from your Testimonials folder is on their card (Josh, Donnie, Riccardo, Meylad, Oliver, Jourdon, Michael). Sam is text-only for now: no photo or role yet. Excerpts trimmed from your doc; Michael's reworded from 'you' to 'Cam'. OK to publish?" },
     8:  { sel: ".about-media", t: "Stage photos: bigger, two of them", s: "check",
           ask: "Make the stage photo bigger, more prominent and more square.",
           did: "Two square stage photos, now a large full-width pair above the About copy (about twice the previous size): front pose on the AGP stage and the gold-medal podium, colour-corrected from your originals. The CHARGE portrait is off the page until the new About section arrives." },
@@ -60,7 +60,7 @@
           did: "Case studies (Riccardo and Oliver) now sit on cream, between the 'Why conventional coaching fails' cream and the engagement cream. The case cards stay dark so the photos and stats stand out." },
     18: { sel: ".wall-head", t: "More results wall", s: "needs",
           ask: "(Stalin) Remove the Before / After labels in this section. Names only on the clients we know.",
-          did: "Before / After labels removed from the wall. Named: Donnie (Construction & property), Meylad (Dental practice owner) and Jourdon (Electrical business owner), side by side; photos confirmed against your named Testimonials folder. Question for Cameron: names and occupations for the other wall clients?" },
+          did: "Wall now opens with the 7 testimonial clients, named with their occupation: Josh, Donnie, Riccardo, Meylad, Oliver, Jourdon, Michael. Then 8 more clients from your All Transformations folder, unnamed. No Before / After labels on the wall. Question for Cameron: names and occupations for the other clients?" },
   };
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Cameron's feedback · 19 Oct";
