@@ -60,7 +60,7 @@
           did: "Case studies (Riccardo and Oliver) now sit on cream, between the 'Why conventional coaching fails' cream and the engagement cream. The case cards stay dark so the photos and stats stand out." },
     18: { sel: ".wall-head", t: "More results wall", s: "needs",
           ask: "(Stalin) Remove the Before / After labels in this section. Names only on the clients we know.",
-          did: "Before / After labels removed from the wall. Names shown only for Donnie (Construction & property) and Meylad (Dental practice owner). Question for Cameron: do you want names and occupations for the other clients in this section? If so, send them through." },
+          did: "Before / After labels removed from the wall. Named: Donnie (Construction & property), Meylad (Dental practice owner) and Jourdon (Electrical business owner), side by side; photos confirmed against your named Testimonials folder. Question for Cameron: names and occupations for the other wall clients?" },
   };
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Cameron's feedback · 19 Oct";
