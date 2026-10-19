@@ -11,7 +11,7 @@
   "use strict";
   var CONSENT_WEBHOOK = "";   // PREVIEW COPY: consent clicks are not sent to Zapier
   var PIXEL_ID = "1073988224464549";
-  var PIXEL_HOSTS = ["www.cameronwhitters.com", "cameronwhitters.com"];   // PREVIEW COPY: Pixel never fires here
+  var PIXEL_HOSTS = ["www.cameronwhitters.com", "cameronwhitters.com"]   // PREVIEW COPY: Pixel never fires here;
   var POLICY_VERSION = "2026-10-18";
   var KEY = "cw.consent.v1";
 

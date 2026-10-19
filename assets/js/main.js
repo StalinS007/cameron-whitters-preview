@@ -56,16 +56,16 @@
   $$(".reveal").forEach((el) => io.observe(el));
 
   /* ---------- Proof strip arrows (#3) ---------- */
-  const strip = $("#proofStrip");
-  if (strip) {
-    $$(".strip-btn").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        const tile = strip.querySelector("figure");
-        const step = tile ? tile.getBoundingClientRect().width + 2 : 300;
-        strip.scrollBy({ left: Number(btn.dataset.dir) * step * 2, behavior: reduceMotion ? "auto" : "smooth" });
-      })
-    );
-  }
+  // Each arrow scrolls the strip named in data-target (default: the proof strip).
+  $$(".strip-btn").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const strip = $(btn.dataset.target || "#proofStrip");
+      if (!strip) return;
+      const tile = strip.querySelector("figure, blockquote");
+      const step = tile ? tile.getBoundingClientRect().width + 2 : 300;
+      strip.scrollBy({ left: Number(btn.dataset.dir) * step * 2, behavior: reduceMotion ? "auto" : "smooth" });
+    })
+  );
 
   /* ---------- Protocol diagram: plays once when in view, then follows the scroll ---------- */
   const seq = $("#protocolSeq");
