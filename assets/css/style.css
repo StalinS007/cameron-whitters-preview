@@ -678,3 +678,6 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; text-transform: uppe
 .cream-cases .cases { gap: clamp(20px, 3vw, 36px); }
 .cream-cases .case-copy p, .cream-cases .case-steps span { color: var(--body-text); }
 .cream-cases .case-steps li.deep span { color: var(--white); }
+
+/* "More results" wall: no Before / After labels (names only where known) */
+.wall figure::before, .wall figure::after { content: none; display: none; }

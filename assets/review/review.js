@@ -58,6 +58,9 @@
     17: { sel: "#proof .section-head .h2", t: "Third cream section", s: "check",
           ask: "(Stalin, from Cameron's note about changing tones more often) Three cream resets instead of two, evenly spaced: black \u00b7 cream \u00b7 black \u00b7 cream \u00b7 black \u00b7 cream \u00b7 black.",
           did: "Case studies (Riccardo and Oliver) now sit on cream, between the 'Why conventional coaching fails' cream and the engagement cream. The case cards stay dark so the photos and stats stand out." },
+    18: { sel: ".wall-head", t: "More results wall", s: "needs",
+          ask: "(Stalin) Remove the Before / After labels in this section. Names only on the clients we know.",
+          did: "Before / After labels removed from the wall. Names shown only for Donnie (Construction & property) and Meylad (Dental practice owner). Question for Cameron: do you want names and occupations for the other clients in this section? If so, send them through." },
   };
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Cameron's feedback · 19 Oct";
