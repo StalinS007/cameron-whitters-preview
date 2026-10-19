@@ -55,6 +55,9 @@
           ask: "(Stalin) Replace 'Direct private coaching' with 'Private executive transformation', 'Managed by Cameron' underneath.",
           before: "Direct private coaching · Managed by Cameron",
           did: "Now 'Private executive transformation · Managed by Cameron'." },
+    17: { sel: "#proof .section-head .h2", t: "Third cream section", s: "check",
+          ask: "(Stalin, from Cameron's note about changing tones more often) Three cream resets instead of two, evenly spaced: black \u00b7 cream \u00b7 black \u00b7 cream \u00b7 black \u00b7 cream \u00b7 black.",
+          did: "Case studies (Riccardo and Oliver) now sit on cream, between the 'Why conventional coaching fails' cream and the engagement cream. The case cards stay dark so the photos and stats stand out." },
   };
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Cameron's feedback · 19 Oct";

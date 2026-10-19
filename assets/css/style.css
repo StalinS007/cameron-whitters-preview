@@ -672,3 +672,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; text-transform: uppe
 
 /* About: stage photos as a large full-width pair, copy underneath */
 .about-grid .about-copy { max-width: 820px; }
+
+/* Third cream reset: case studies. The case cards stay dark so the stats and photos pop. */
+.cream-cases .case { box-shadow: 0 18px 50px rgba(26, 22, 18, 0.18); }
+.cream-cases .cases { gap: clamp(20px, 3vw, 36px); }
+.cream-cases .case-copy p, .cream-cases .case-steps span { color: var(--body-text); }
+.cream-cases .case-steps li.deep span { color: var(--white); }
