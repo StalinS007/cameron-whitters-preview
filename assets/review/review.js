@@ -26,7 +26,7 @@
           removed: "Removed: “Client photographs, shared with consent. Results vary.”" },
     7:  { sel: ".quotes-head", t: "All written testimonials in", s: "check",
           ask: "8 testimonials in the Google Drive doc (one still coming from a client).",
-          did: "All 8 in, under the heading Testimonials. Each identified person's transformation photo from your Testimonials folder is on their card (Josh, Donnie, Riccardo, Meylad, Oliver, Jourdon, Michael). Sam is text-only for now: no photo or role yet. Excerpts trimmed from your doc; Michael's reworded from 'you' to 'Cam'. OK to publish?" },
+          did: "All 8 in, under the heading Testimonials. Each identified person's transformation photo from your Testimonials folder is on their card (Josh, Donnie, Riccardo, Meylad, Oliver, Jourdon, Michael). Sam is text-only: he doesn't want his picture used. Excerpts trimmed from your doc; Michael's reworded from 'you' to 'Cam'. OK to publish?" },
     8:  { sel: ".about-media", t: "Stage photos: bigger, two of them", s: "check",
           ask: "Make the stage photo bigger, more prominent and more square.",
           did: "Two square stage photos, now a large full-width pair above the About copy (about twice the previous size): front pose on the AGP stage and the gold-medal podium, colour-corrected from your originals. The CHARGE portrait is off the page until the new About section arrives." },
