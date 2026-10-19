@@ -29,7 +29,7 @@
           did: "7 of 8 in, as a swipe strip: Josh, Donnie, Riccardo, Meylad, Oliver, Michael, Sam. Excerpts trimmed from your doc; Michael's reworded from 'you' to 'Cam'. Needs: Jourdon's testimonial (blank in the doc)." },
     8:  { sel: ".about-media", t: "Stage photos: bigger, two of them", s: "check",
           ask: "Make the stage photo bigger, more prominent and more square.",
-          did: "Two square stage photos, larger: front pose on the AGP stage and the gold-medal podium, colour-corrected from your originals. The CHARGE portrait is off the page until the new About section arrives." },
+          did: "Two square stage photos, now a large full-width pair above the About copy (about twice the previous size): front pose on the AGP stage and the gold-medal podium, colour-corrected from your originals. The CHARGE portrait is off the page until the new About section arrives." },
     9:  { sel: ".about-copy", t: "About section copy", s: "needs",
           ask: "Cameron is redoing this section.",
           did: "Unchanged. Waiting on the new version." },
