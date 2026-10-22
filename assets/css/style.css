@@ -804,7 +804,6 @@ body { line-height: 1.62; }
 @media (max-width: 1024px) { .wall-sec .quotes.quotes-strip { grid-auto-columns: calc((100% - 16px) / 2); } }
 @media (max-width: 860px) {
   .quotes-head .strip-nav { display: flex; }
-  .wall-sec .quotes.quotes-strip { grid-auto-columns: 86%; }
 }
 @media (max-width: 520px) { .quotes-head { flex-wrap: wrap; } .quotes-head .strip-btn { height: 44px; padding: 0 12px; } }
 
@@ -864,3 +863,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .quote .q-private::before, .quote .q-private::after { content: none; }
 .q-private b { font-family: var(--display); font-weight: 500; font-size: 20px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--bronze); padding-left: 0.24em; }
 .q-private span { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); max-width: 24ch; line-height: 1.5; }
+
+/* Phones: one complete, centred testimonial per swipe (no half-cut neighbour); 2 full cards up to tablet width */
+@media (max-width: 600px) {
+  .wall-sec .quotes.quotes-strip { grid-auto-columns: 100%; gap: 16px; }
+  .quotes-strip .quote { scroll-snap-align: center; }
+}
