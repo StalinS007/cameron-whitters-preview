@@ -916,3 +916,19 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .about-stage { max-width: none; }
 }
 .about-grid .about-text p:first-child { color: inherit; font-size: inherit; }
+
+/* About, 22 Oct (Stalin): desktop shows the stool portrait and the full-body gold-medal photo stacked, same size;
+   phones keep portrait after the intro and the small medal card after the text. Every image opens in full. */
+.about-grid { grid-template-areas: "intro portrait" "text portrait" ". stagebig"; row-gap: 0; }
+.about-grid .about-portrait, .about-stage-big { aspect-ratio: 2 / 3; }
+.about-stage-big { grid-area: stagebig; margin: 20px 0 0; overflow: hidden; border: 1px solid var(--line); background: #000; cursor: zoom-in; }
+.about-stage-big img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.about-portrait img { object-position: 50% 30%; }
+.about-stage { display: none; }
+.about-stage img { object-position: 50% 6%; }
+@media (max-width: 860px) {
+  .about-grid { grid-template-areas: "intro" "portrait" "text" "stage"; row-gap: 24px; }
+  .about-grid .about-portrait { aspect-ratio: auto; }
+  .about-stage-big { display: none; }
+  .about-stage { display: flex; }
+}
