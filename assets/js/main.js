@@ -25,22 +25,27 @@
     (entries) => { entries.forEach((e) => (e.isIntersecting ? visibleCtas.add(e.target) : visibleCtas.delete(e.target))); onScroll(); },
     { threshold: 0.01 }
   );
+  // Guide: the sticky button appears only once the main hero button has scrolled past,
+  // and hides while the menu or the image viewer is open.
+  const heroBtn = $(".hero .btn-lg");
   const onScroll = () => {
     const y = window.scrollY;
     nav.classList.toggle("scrolled", y > 40);   // #26: on mobile the header also shrinks (CSS)
-    const pastHero = y > hero.offsetHeight - 120;
-    sticky.classList.toggle("show", pastHero && visibleCtas.size === 0);
+    const pastHero = heroBtn ? heroBtn.getBoundingClientRect().bottom < 0 : y > hero.offsetHeight - 120;
+    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open");
+    sticky.classList.toggle("show", pastHero && visibleCtas.size === 0 && !overlayOpen);
   };
   inlineCtas.forEach((b) => ctaIo.observe(b));
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
   const burger = $("#burger");
-  const closeMenu = () => { nav.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); document.body.style.overflow = ""; };
+  const closeMenu = () => { nav.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); document.body.style.overflow = ""; onScroll(); };
   burger.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
     burger.setAttribute("aria-expanded", open);
     document.body.style.overflow = open ? "hidden" : "";
+    onScroll();
   });
   $$("#navLinks a").forEach((a) => a.addEventListener("click", closeMenu));
 
@@ -62,45 +67,12 @@
       const strip = $(btn.dataset.target || "#proofStrip");
       if (!strip) return;
       const tile = strip.querySelector("figure, blockquote");
-      const step = tile ? tile.getBoundingClientRect().width + 2 : 300;
-      strip.scrollBy({ left: Number(btn.dataset.dir) * step * 2, behavior: reduceMotion ? "auto" : "smooth" });
+      const gap = parseFloat(getComputedStyle(strip).columnGap) || 0;
+      const step = tile ? tile.getBoundingClientRect().width + gap : 300;
+      // Guide: arrows advance and snap to one complete card
+      strip.scrollBy({ left: Number(btn.dataset.dir) * step, behavior: reduceMotion ? "auto" : "smooth" });
     })
   );
-
-  /* ---------- Protocol diagram: plays once when in view, then follows the scroll ---------- */
-  const seq = $("#protocolSeq");
-  const diagram = $("#protocolDiagram");
-  if (seq && diagram) {
-    const so = new IntersectionObserver(
-      (entries) => entries.forEach((e) => {
-        if (e.isIntersecting) {
-          seq.classList.add("play"); track("protocol_play"); so.unobserve(diagram);
-          setTimeout(() => seq.classList.add("played"), reduceMotion ? 0 : 1300);
-        }
-      }),
-      { threshold: 0.35 }
-    );
-    so.observe(diagram);
-
-    const months = $$(".pd-months span", diagram);
-    const phases = $$(".pd-phase", diagram);
-    const headLabel = $("#pdHeadLabel");
-    let ticking = false;
-    const updateP = () => {
-      ticking = false;
-      const r = diagram.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const p = Math.max(0, Math.min(1, (vh * 0.82 - r.top) / (r.height + vh * 0.5)));
-      seq.style.setProperty("--p", p.toFixed(4));
-      const m = Math.min(6, Math.floor(p * 6) + 1);
-      months.forEach((s, i) => s.classList.toggle("is-now", i === m - 1));
-      phases.forEach((ph, i) => ph.classList.toggle("is-now", i === (m <= 3 ? 0 : 1)));
-      if (headLabel) headLabel.textContent = `Month ${m} · Phase ${m <= 3 ? 1 : 2}`;
-    };
-    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(updateP); } }, { passive: true });
-    window.addEventListener("resize", updateP);
-    updateP();
-  }
 
   /* ---------- VSL placeholder ---------- */
   const vsl = $("#vsl");
@@ -122,23 +94,48 @@
     });
   });
 
-  /* ---------- Lightbox ---------- */
+  /* ---------- "View all transformations" ---------- */
+  const wallAll = $("#wallAll");
+  if (wallAll) wallAll.addEventListener("click", () => {
+    $("#wallGrid").classList.add("all");
+    wallAll.setAttribute("aria-expanded", "true");
+    track("wall_view_all");
+  });
+
+  /* ---------- Lightbox: client label, previous / next within the same collection ---------- */
   const lb = $("#lightbox");
   const lbImg = $("#lbImg");
   const lbCap = $("#lbCap");
+  let group = [], idx = 0;
+  const show = (i) => {
+    idx = (i + group.length) % group.length;
+    const el = group[idx], img = $("img", el);
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lbCap.textContent = el.dataset.lb;
+  };
   $$("[data-lb]").forEach((el) =>
     el.addEventListener("click", () => {
-      const img = $("img", el);
-      lbImg.src = img.src;
-      lbImg.alt = img.alt;
-      lbCap.textContent = el.dataset.lb;
+      const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases");
+      group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null) : [el];
+      if (!group.includes(el)) group = [el];
+      lb.classList.toggle("single", group.length < 2);
+      show(group.indexOf(el));
       lb.classList.add("open");
       lb.setAttribute("aria-hidden", "false");
+      onScroll();
     })
   );
-  const closeLb = () => { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); };
-  lb.addEventListener("click", closeLb);
-  document.addEventListener("keydown", (e) => e.key === "Escape" && closeLb());
+  const closeLb = () => { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); onScroll(); };
+  lb.addEventListener("click", (e) => { if (!e.target.closest(".lb-nav")) closeLb(); });
+  $(".lb-prev", lb).addEventListener("click", () => show(idx - 1));
+  $(".lb-next", lb).addEventListener("click", () => show(idx + 1));
+  document.addEventListener("keydown", (e) => {
+    if (!lb.classList.contains("open")) return;
+    if (e.key === "Escape") closeLb();
+    if (e.key === "ArrowLeft") show(idx - 1);
+    if (e.key === "ArrowRight") show(idx + 1);
+  });
 
   $("#yr").textContent = new Date().getFullYear();
 })();
