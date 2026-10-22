@@ -932,3 +932,11 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .about-stage-big { display: none; }
   .about-stage { display: flex; }
 }
+/* About photos grouped: one column on desktop, no gap between them */
+.about-grid { grid-template-areas: "intro media" "text media" "stage media"; }
+.about-media { grid-area: media; display: grid; gap: 20px; align-content: start; }
+.about-media .about-portrait, .about-media .about-stage-big { margin: 0; }
+@media (max-width: 860px) {
+  .about-grid { grid-template-areas: "intro" "portrait" "text" "stage"; }
+  .about-media { display: contents; }
+}
