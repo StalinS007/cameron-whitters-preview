@@ -895,3 +895,23 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 @media (max-width: 860px) { .split > .section-head { top: auto; } }
 /* Compact phone header keeps a comfortable tap target for the menu button */
 @media (max-width: 860px) { .nav.scrolled .burger { width: 44px; height: 40px; } .nav.scrolled .burger span { top: 19px; left: 12px; } }
+
+/* About (guide): heading + intro first, professional portrait beside (desktop) / after the opening text (phones),
+   competition photo as a small supporting card */
+.about-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); grid-template-areas: "intro portrait" "text portrait" "stage portrait"; column-gap: clamp(32px, 5vw, 72px); row-gap: 0; align-items: start; }
+.about-intro { grid-area: intro; }
+.about-intro .h2 { text-align: left; }
+.about-lead { color: var(--white); font-size: clamp(17px, 1.4vw, 19px); margin: 26px 0 16px; max-width: 58ch; }
+.about-grid .about-text { grid-area: text; margin: 0 0 28px; }
+.about-grid .about-portrait { grid-area: portrait; align-self: start; }
+.about-portrait img { object-position: 50% 20%; }
+.about-stage { grid-area: stage; margin: 0; display: flex; align-items: center; gap: 18px; padding: 14px; border: 1px solid var(--rule); background: var(--ink); max-width: 420px; cursor: zoom-in; }
+.about-stage img { width: 96px; height: 96px; object-fit: cover; object-position: 50% 18%; flex: none; }
+.about-stage figcaption b { display: block; font-family: var(--display); font-weight: 500; font-size: 18px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--white); }
+.about-stage figcaption span { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bronze-soft); }
+@media (max-width: 860px) {
+  .about-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "intro" "portrait" "text" "stage"; row-gap: 24px; }
+  .about-lead { margin-bottom: 0; }
+  .about-grid .about-text { margin: 0; }
+  .about-stage { max-width: none; }
+}
