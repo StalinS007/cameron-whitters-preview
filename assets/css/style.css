@@ -941,3 +941,4 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .about-media { display: contents; }
 }
 @media (min-width: 861px) { .about-media .about-portrait, .about-media .about-stage-big { grid-area: auto; } }
+.about-grid .about-media { grid-template-columns: minmax(0, 1fr); max-width: none; margin: 0; gap: 20px; }
