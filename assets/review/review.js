@@ -116,7 +116,7 @@
           did: "Both 'Draft for review' notes removed. Terms dated 22 Oct with the guarantee wording. Check: no lawyer has reviewed this wording." },
     34: { sel: ".footer-words", t: "Design rules from the guide", s: "done", src: "Website Edit Guide",
           ask: "\"Use a 48–56 px control within a compact bar… 16–18 px body text… navigation labels and the application button wrap onto two lines. Switch to the menu earlier… remove staggered delays from essential text and the main action.\"",
-          did: "Phone Apply bar is smaller (50 px button) and only appears after the hero button. It hides while the menu or image viewer is open, and the page has room at the bottom so it doesn't cover the end. Body text 16–17 px. The menu switches over before the links can wrap. No delayed entrances on the hero, and the protocol is static. Keyboard focus is now visible." },
+          did: "Phone Apply bar is smaller (50 px button) and only appears after the hero button. It hides while the menu or image viewer is open, and the page has room at the bottom so it doesn't cover the end. Body text 16–17 px. The menu switches over before the links can wrap. Compact header after scrolling (69 → 55 px) with a 44 × 40 px menu button. Section spacing on phones tightened (88 → 60 px), about 1,000 px less scrolling. No delayed entrances on the hero, and the protocol is static. Keyboard focus is now visible." },
   };
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Website edits · 22 Oct";

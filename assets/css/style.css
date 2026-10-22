@@ -874,3 +874,24 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .proof-strip { grid-auto-columns: calc(100vw - 2 * var(--gutter)); gap: var(--gutter); scroll-padding-inline: var(--gutter); }
   .proof-strip figure { scroll-snap-align: center; }
 }
+
+/* Guide: "On phones, reduce … unnecessary blank sections" — tighter vertical rhythm on phones only */
+@media (max-width: 600px) {
+  .section { padding: 60px 0; }
+  .hero { padding-top: 92px; padding-bottom: 52px; }
+  .proof-strip-sec { padding: 44px 0 40px; }
+  .section-head { margin-bottom: 32px; }
+  .recognition .section-head { margin-bottom: 28px; }
+  .life { padding-top: 40px; }
+  .bridge { margin-bottom: 44px; padding-bottom: 36px; }
+  .closing-line, .about-close, .cta-after, .quotes-head { margin-top: 36px; }
+  .band.has-img { min-height: 56vh; }
+  .band.has-img .wrap { padding-top: 34vh; padding-bottom: 40px; }
+  .cases { gap: 24px; }
+  .wall-head { margin-bottom: 24px; }
+  .guarantee { margin-top: 28px; }
+  .footer { padding: 32px 0 28px; }
+}
+@media (max-width: 860px) { .split > .section-head { top: auto; } }
+/* Compact phone header keeps a comfortable tap target for the menu button */
+@media (max-width: 860px) { .nav.scrolled .burger { width: 44px; height: 40px; } .nav.scrolled .burger span { top: 19px; left: 12px; } }
