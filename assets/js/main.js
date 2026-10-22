@@ -114,7 +114,7 @@
   const show = (i) => {
     idx = (i + group.length) % group.length;
     const el = group[idx], img = $("img", el);
-    lbImg.src = img.src;
+    lbImg.src = el.dataset.full || img.src;   // data-full: a larger file for the enlarged view
     lbImg.alt = img.alt;
     lbCap.textContent = el.dataset.lb;
   };
