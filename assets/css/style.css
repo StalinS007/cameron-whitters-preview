@@ -869,3 +869,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .wall-sec .quotes.quotes-strip { grid-auto-columns: 100%; gap: 16px; }
   .quotes-strip .quote { scroll-snap-align: center; }
 }
+/* Phones: one complete, centred proof pair per swipe (no half-cut neighbour) */
+@media (max-width: 600px) {
+  .proof-strip { grid-auto-columns: calc(100vw - 2 * var(--gutter)); gap: var(--gutter); scroll-padding-inline: var(--gutter); }
+  .proof-strip figure { scroll-snap-align: center; }
+}
