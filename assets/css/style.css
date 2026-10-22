@@ -789,7 +789,6 @@ body { line-height: 1.62; }
 .wall figcaption span { display: block; margin-top: 2px; }
 .wall:not(.all) .wall-more { display: none; }
 .wall-all { margin-top: 24px; text-align: center; }
-.wall.all + .wall-all { display: none; }
 @media (max-width: 860px) {
   .wall { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .wall figure:last-child { grid-column: auto; aspect-ratio: auto; }

@@ -97,9 +97,13 @@
   /* ---------- "View all transformations" ---------- */
   const wallAll = $("#wallAll");
   if (wallAll) wallAll.addEventListener("click", () => {
-    $("#wallGrid").classList.add("all");
-    wallAll.setAttribute("aria-expanded", "true");
-    track("wall_view_all");
+    const grid = $("#wallGrid");
+    const open = grid.classList.toggle("all");
+    wallAll.setAttribute("aria-expanded", String(open));
+    wallAll.textContent = open ? "Show fewer" : "View all transformations";
+    if (open) track("wall_view_all");
+    // Collapsing removes the cards below, so bring the wall back into view
+    else window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - 100, behavior: reduceMotion ? "auto" : "smooth" });
   });
 
   /* ---------- Lightbox: client label, previous / next within the same collection ---------- */
