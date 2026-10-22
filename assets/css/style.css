@@ -942,3 +942,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 }
 @media (min-width: 861px) { .about-media .about-portrait, .about-media .about-stage-big { grid-area: auto; } }
 .about-grid .about-media { grid-template-columns: minmax(0, 1fr); max-width: none; margin: 0; gap: 20px; }
+/* About photos smaller so the portrait and the stage photo both fit beside the text on desktop */
+@media (min-width: 861px) {
+  .about-grid { grid-template-columns: minmax(0, 1fr) clamp(220px, 21vw, 270px); column-gap: clamp(40px, 6vw, 96px); }
+  .about-grid .about-media { gap: 16px; }
+}
