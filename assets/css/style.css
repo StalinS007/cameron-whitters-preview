@@ -860,3 +860,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .vsl-caption { letter-spacing: 0.06em; font-size: 12px; }
   .btn-lg { padding: 18px 14px; font-size: 13.5px; letter-spacing: 0.14em; }
 }
+/* Sam's card: blank photo panel so every testimonial card has the same shape */
+.quote .q-private { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: default; background: repeating-linear-gradient(135deg, #141413 0 12px, #181817 12px 24px); border-bottom: 1px solid var(--line); text-align: center; padding: 20px; }
+.quote .q-private::before, .quote .q-private::after { content: none; }
+.q-private b { font-family: var(--display); font-weight: 500; font-size: 20px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--bronze); padding-left: 0.24em; }
+.q-private span { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); max-width: 24ch; line-height: 1.5; }
