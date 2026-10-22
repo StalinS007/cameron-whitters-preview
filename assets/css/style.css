@@ -940,3 +940,4 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .about-grid { grid-template-areas: "intro" "portrait" "text" "stage"; }
   .about-media { display: contents; }
 }
+@media (min-width: 861px) { .about-media .about-portrait, .about-media .about-stage-big { grid-area: auto; } }
