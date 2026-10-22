@@ -141,5 +141,12 @@
     if (e.key === "ArrowRight") show(idx + 1);
   });
 
+  /* ---------- Guide: a photo that fails to load never leaves an empty card ---------- */
+  const dropBroken = (img) => { const card = img.closest("#proofStrip figure, #wallGrid figure"); if (card) card.remove(); };
+  $$("#proofStrip img, #wallGrid img").forEach((img) => {
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute("loading") !== "lazy") dropBroken(img);
+    img.addEventListener("error", () => dropBroken(img));
+  });
+
   $("#yr").textContent = new Date().getFullYear();
 })();
