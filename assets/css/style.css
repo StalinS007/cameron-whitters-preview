@@ -915,3 +915,4 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .about-grid .about-text { margin: 0; }
   .about-stage { max-width: none; }
 }
+.about-grid .about-text p:first-child { color: inherit; font-size: inherit; }
