@@ -43,7 +43,7 @@
     "P2": {"t": "Final section: add 'Not all applications are accepted.'", "s": "done", "src": "Loom 23 Oct", "ask": "[14:34] \"Your application is the first step. We agree on the engagement before you commit. Not all applications are accepted. Boom. Apply.\"", "did": "'Not all applications are accepted.' added under the final button.", "sel": "#apply .cta-sub"},
     "P3": {"t": "Keep: engagement, guarantee, FAQ, final heading", "s": "done", "src": "Loom 23 Oct", "ask": "[13:48] \"This is fine. I like this. I like this. Apply to work with Cameron is fine.\" [14:30] \"Frequently asked questions is fine.\"", "did": "Engagement, guarantee, FAQ and the final heading unchanged.", "sel": "#engagement .section-head"},
   };
-  const TODO = ["W2 · Timeframes: send Cameron the 24 wall names; he sends back a timeframe for each, then they go under every name.", "VSL · Not embedded for now (Stalin 24 Oct); kept on the to-do list. The site shows the thumbnail (label 5 min 51 sec)."];
+  const TODO = ["W2 · Timeframes: send Cameron the 24 wall names; he sends back a timeframe for each, then they go under every name.", "VSL · Embedded (VSL chat, 24 Oct): the final 5:46 cut plays in the hero with native controls; label '5 min 46 sec'."];
   const STATUS = { done: "Done", check: "Done · is this OK?", needs: "Waiting on Cameron" };
   const TITLE = "Website edits · 23 Oct (numbers match the artifact)";
 

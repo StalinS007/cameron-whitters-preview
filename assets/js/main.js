@@ -74,12 +74,22 @@
     })
   );
 
-  /* ---------- VSL placeholder ---------- */
+  /* ---------- VSL: our own player. The poster and bronze play button show until the first click,
+     then the hosted 1080p file plays in place with the browser's own controls (sound allowed: it starts from a click) ---------- */
   const vsl = $("#vsl");
+  const VSL_SRC = "assets/video/cameron-vsl-1080p.mp4?v=20261024";
   const playVsl = () => {
+    if (vsl.classList.contains("played")) return;
     track("vsl_play");
-    // Replace with the real embed (hosted video or Vimeo iframe) once the final VSL is uploaded.
-    vsl.classList.add("played");
+    const v = document.createElement("video");
+    v.src = VSL_SRC; v.controls = true; v.playsInline = true; v.preload = "auto";
+    v.poster = $(".vsl-poster", vsl).currentSrc || $(".vsl-poster", vsl).src;
+    v.setAttribute("aria-label", "Watch Cameron explain the approach, 5 minutes 46 seconds");
+    vsl.appendChild(v);
+    vsl.classList.add("played"); vsl.removeAttribute("role"); vsl.removeAttribute("tabindex"); vsl.removeAttribute("aria-label");
+    v.addEventListener("ended", () => track("vsl_complete"), { once: true });
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});   // if the browser blocks it, the controls are already there to press play
   };
   vsl.addEventListener("click", playVsl);
   vsl.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), playVsl()));
