@@ -1044,3 +1044,11 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .about-c-media:hover .about-arrow, .about-arrow:focus-visible { opacity: 1; }
 @media (hover: none) { .about-arrow { display: none; } }
 @media (max-width: 860px) { .about-c-media { min-height: 0; aspect-ratio: 3 / 4; } }
+
+/* Optimise 23 Oct: About photo column a little wider so the double biceps isn't cropped at the arms */
+@media (min-width: 861px) { .about-c { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); } }
+/* Optimise 23 Oct: bigger tap areas for the About dots and footer links (look unchanged) */
+.about-dots { gap: 0; right: 10px; bottom: 18px; }
+.about-dots button { box-sizing: content-box; padding: 0; border: 12px solid transparent; background-clip: content-box; box-shadow: inset 0 0 0 1px var(--bronze-soft); }
+.about-dots button.on { background: var(--bronze-soft); background-clip: content-box; }
+.footer nav a { display: inline-block; padding: 12px 0; }
