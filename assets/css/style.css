@@ -1005,3 +1005,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .btn-wall-all:hover { box-shadow: 0 0 0 1px var(--bronze-soft), 0 12px 36px rgba(184, 155, 106, 0.35); }
 .wall-all { margin-top: 32px; }
 @media (max-width: 520px) { .hero-cred b { font-size: 13px; letter-spacing: 0.08em; } .hero-cred span { font-size: 13px; } }
+
+/* About photos (agreed with Cameron, 23 Oct): stage photo first, gold-medal photo as a second clickable picture */
+.about-c-media { position: relative; display: flex; }
+.about-c-media .about-c-feat { flex: 1; }
+.about-c-medal { position: absolute; top: 16px; right: 16px; width: clamp(96px, 9vw, 130px); aspect-ratio: 3 / 4; padding: 0; border: 2px solid var(--bronze); background: #000; overflow: hidden; cursor: zoom-in; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55); transition: transform 0.2s var(--ease), border-color 0.2s; z-index: 2; }
+.about-c-medal:hover { transform: scale(1.04); border-color: var(--bronze-soft); }
+.about-c-medal img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 4%; }

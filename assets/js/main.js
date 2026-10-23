@@ -120,7 +120,7 @@
   };
   $$("[data-lb]").forEach((el) =>
     el.addEventListener("click", () => {
-      const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases");
+      const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases, .about-c-media");
       group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null) : [el];
       if (!group.includes(el)) group = [el];
       lb.classList.toggle("single", group.length < 2);
