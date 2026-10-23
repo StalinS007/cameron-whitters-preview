@@ -1028,7 +1028,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 }
 
 /* Stalin 23 Oct: About photo is a two-picture swipe (double biceps, then the full-length medal portrait); true colours, no darkening */
-.about-c-media { position: relative; display: block; overflow: hidden; border: 1px solid var(--line); background: #070707; min-height: 560px; }
+.about-c-media { position: relative; display: block; width: 100%; justify-self: stretch; overflow: hidden; border: 1px solid var(--line); background: #070707; min-height: 560px; }
 .about-slides { position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
 .about-slides::-webkit-scrollbar { display: none; }
 .about-slide { flex: 0 0 100%; margin: 0; position: relative; scroll-snap-align: start; cursor: zoom-in; }
@@ -1045,7 +1045,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .about-arrow.prev { left: 14px; } .about-arrow.next { right: 14px; }
 .about-c-media:hover .about-arrow, .about-arrow:focus-visible { opacity: 1; }
 @media (hover: none) { .about-arrow { display: none; } }
-@media (max-width: 860px) { .about-c-media { min-height: 0; aspect-ratio: 3 / 4; } }
+/* Phones: give the photo box an explicit size (Safari does not stretch an aspect-ratio box in a grid, so it collapsed to nothing) */
+@media (max-width: 860px) { .about-c-media { width: 100%; justify-self: stretch; min-height: 0; height: calc((100vw - 2 * var(--gutter)) * 4 / 3); max-height: 80vh; aspect-ratio: auto; } }
 
 /* Optimise 23 Oct: About photo column a little wider so the double biceps isn't cropped at the arms */
 @media (min-width: 861px) { .about-c { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); } }
