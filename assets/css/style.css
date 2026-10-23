@@ -1017,3 +1017,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .case-testi { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 14px; border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s, border-color .2s; }
 .case-testi:hover, .case-testi:focus-visible { color: var(--white); border-color: var(--bronze); }
 .quotes-strip .quote.testi-flash { outline: 1px solid var(--bronze); outline-offset: -1px; transition: outline-color .6s; }
+
+/* Stalin 23 Oct: Ella photo a bit larger (was 0.85fr / 1.15fr) */
+@media (min-width: 861px) { .life-split-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); } }
