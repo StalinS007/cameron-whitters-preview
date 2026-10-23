@@ -1018,5 +1018,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .case-testi:hover, .case-testi:focus-visible { color: var(--white); border-color: var(--bronze); }
 .quotes-strip .quote.testi-flash { outline: 1px solid var(--bronze); outline-offset: -1px; transition: outline-color .6s; }
 
-/* Stalin 23 Oct: Ella photo a bit larger (was 0.85fr / 1.15fr) */
-@media (min-width: 861px) { .life-split-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); } }
+/* Stalin 23 Oct: Ella photo much larger, same side-by-side layout (was 0.85fr / 1.15fr) */
+@media (min-width: 861px) {
+  .life-split .life-split-grid { max-width: 1360px; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr); gap: clamp(40px, 5vw, 88px); }
+  .life-photo-full { max-height: 88vh; aspect-ratio: 4 / 5; justify-self: end; width: 100%; max-width: calc(88vh * 0.8); }
+  .life-photo-full img { height: 100%; object-fit: cover; }
+}
