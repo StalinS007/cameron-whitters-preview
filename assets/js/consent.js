@@ -6,10 +6,14 @@
    - The Pixel (CSW Fitness Market Data, 1073988224464549) is never loaded without consent,
      and only after the page calls window.CWReleasePixel() (after bootstrap has cleaned the URL).
    - Each grant / decline / withdrawal is sent to CONSENT_WEBHOOK (a Zapier Catch Hook) with an
-     opaque consent ID, so the backend can verify current consent. Empty = no logging yet. */
+     opaque consent ID, so the backend can verify current consent. Empty = no logging yet.
+   - When CONSENT_ENDPOINT is set (Cameron's Cloudflare consent Worker, tools/consent-worker), each change
+     goes there instead, with a unique event ID and a per-visitor revision; the Worker keeps the permanent
+     record and forwards to Zapier. */
 (function () {
   "use strict";
   var CONSENT_WEBHOOK = "";   // PREVIEW COPY: consent clicks are not sent to Zapier
+  var CONSENT_ENDPOINT = "";   // PREVIEW COPY: consent clicks are not recorded
   var PIXEL_ID = "1073988224464549";
   var PIXEL_HOSTS = ["www.cameronwhitters.com", "cameronwhitters.com"]   // PREVIEW COPY: Pixel never fires here;
   var POLICY_VERSION = "2026-10-18";
@@ -27,7 +31,7 @@
     return Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
   }
 
-  var state = read();       // { id, advertising: "granted" | "declined", at, v }
+  var state = read();       // { id, advertising: "granted" | "declined", at, v, rev }
   function granted() { return !!(state && state.advertising === "granted" && state.v === POLICY_VERSION); }
 
   window.CWConsent = {
@@ -37,6 +41,14 @@
   };
 
   function log(status) {
+    if (CONSENT_ENDPOINT) {
+      var evt = JSON.stringify({
+        consent_id: state.id, event_id: newId(), revision: state.rev, choice: state.advertising, purpose: "advertising",
+        policy_version: POLICY_VERSION, occurred_at: state.at, page: location.origin + location.pathname,
+      });
+      try { fetch(CONSENT_ENDPOINT, { method: "POST", keepalive: true, headers: { "Content-Type": "text/plain" }, body: evt }); } catch (e) {}
+      return;
+    }
     if (!CONSENT_WEBHOOK) return;
     var body = JSON.stringify({
       consent_id: state.id, status: status, purpose: "advertising", policy_version: POLICY_VERSION,
@@ -69,7 +81,7 @@
 
   function setChoice(advertising) {
     var wasGranted = granted();
-    state = { id: (state && state.id) || newId(), advertising: advertising, at: new Date().toISOString(), v: POLICY_VERSION };
+    state = { id: (state && state.id) || newId(), advertising: advertising, at: new Date().toISOString(), v: POLICY_VERSION, rev: ((state && state.rev) || 0) + 1 };
     write(state);
     log(advertising === "granted" ? "granted" : wasGranted ? "withdrawn" : "declined");
     if (advertising === "granted") loadPixel();
