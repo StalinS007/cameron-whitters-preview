@@ -84,6 +84,21 @@
   vsl.addEventListener("click", playVsl);
   vsl.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), playVsl()));
 
+  /* ---------- Case studies: "testimonial" link scrolls up to that card in the strip ---------- */
+  $$("[data-testi]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      const card = $(a.dataset.testi), strip = card && card.closest(".quotes-strip");
+      if (!card || !strip) return;
+      e.preventDefault();
+      const behavior = reduceMotion ? "auto" : "smooth";
+      strip.scrollTo({ left: card.offsetLeft - strip.offsetLeft, behavior });
+      window.scrollTo({ top: strip.getBoundingClientRect().top + window.scrollY - 140, behavior });
+      card.classList.add("testi-flash");
+      setTimeout(() => card.classList.remove("testi-flash"), 2200);
+      track("case_testimonial_click", { client: a.dataset.testi });
+    })
+  );
+
   /* ---------- FAQ accordion ---------- */
   $$(".faq-item").forEach((item) => {
     const q = $(".faq-q", item);
