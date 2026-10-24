@@ -1107,3 +1107,12 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .engagement.tone-dark .tier li, .engagement.tone-dark .included li { color: var(--body-text); }
 .engagement.tone-dark .included li { border-color: rgba(255, 255, 255, 0.18); }
 .engagement.tone-dark .engage-note { color: var(--bronze-soft) !important; }
+
+/* 25 Oct: the wall now has 38 cards. Three across on desktop, and a short last row sits centred instead of stranded on the left */
+@media (min-width: 861px) {
+  .wall { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .wall figure { grid-column: span 2; }
+  .wall.all figure:nth-last-child(2):nth-child(3n+1) { grid-column: 2 / span 2; }
+  .wall.all figure:last-child:nth-child(3n+2) { grid-column: 4 / span 2; }
+  .wall.all figure:last-child:nth-child(3n+1) { grid-column: 3 / span 2; }
+}
