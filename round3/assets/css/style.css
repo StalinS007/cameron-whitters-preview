@@ -1123,3 +1123,5 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .tone-cream .steps4, .tone-cream .standards { background: rgba(26, 22, 18, 0.14); }
 .tone-cream .case-testi { border-color: rgba(26, 22, 18, 0.28); }
 .tone-cream .case { padding: clamp(18px, 2.4vw, 32px); }
+.tone-cream .case-copy { padding: clamp(22px, 2.8vw, 42px); }
+.tone-cream .case-nums.four b { font-size: clamp(18px, 1.8vw, 26px); }
