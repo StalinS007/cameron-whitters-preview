@@ -731,13 +731,13 @@ body { line-height: 1.62; }
 
 /* Recognition (cream): one intro, one headline, five moments, one closing line */
 .recognition .section-head { margin-bottom: clamp(36px, 5vw, 64px); }
-.recog-title { font-size: clamp(26px, 2.8vw, 40px); font-weight: 600; line-height: 1.05; color: var(--cream-ink); }
+.recog-title { font-size: clamp(26px, 2.8vw, 40px); font-weight: 600; line-height: 1.05; color: var(--white); }
 .cream .mirror-list { border-top-color: rgba(26, 22, 18, 0.16); }
 .cream .mirror-list li { color: var(--cream-ink); border-bottom-color: rgba(26, 22, 18, 0.16); font-weight: 400; font-size: clamp(18px, 1.6vw, 22px); }
 .cream .mirror-list li::before { background: #8a6a35; }
 .closing-line { font-family: var(--display); font-weight: 300; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.25; text-align: center; max-width: 34ch; margin: clamp(40px, 5vw, 64px) auto 0; text-wrap: balance; }
 .cream .closing-line { color: var(--cream-ink); }
-.closing-line strong { font-weight: 500; color: #8a6a35; }
+.closing-line strong { font-weight: 500; color: var(--bronze-soft); }
 @media (max-width: 860px) { .recognition .split > .section-head { margin-bottom: 18px; } }
 
 /* Life copy sits straight after the Ella photo, no extra gap */
