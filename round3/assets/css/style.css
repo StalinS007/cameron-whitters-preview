@@ -1116,3 +1116,5 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .wall.all figure:last-of-type:nth-of-type(3n+2) { grid-column: 4 / span 2; }
   .wall.all figure:last-of-type:nth-of-type(3n+1) { grid-column: 3 / span 2; }
 }
+.engagement.tone-dark .guarantee { background: var(--ink); border: 1px solid var(--line); border-top: 3px solid var(--bronze); }
+.engagement.tone-dark .guarantee p:last-child { color: var(--muted) !important; }
