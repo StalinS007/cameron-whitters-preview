@@ -1077,18 +1077,15 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 /* 25 Oct (Cameron: "quicker transition"): strict alternation, black / cream / black / cream down the page.
    Cream sections swap the text and line colours; dark panels (cards, diagram) keep their dark look inside them. */
-.tone-cream { --white: #1a1612; --body-text: #4a4238; --muted: #6b6257; --bronze: #8a6a35; --bronze-soft: #8a6a35; --line: rgba(138, 106, 53, 0.35); --rule: rgba(26, 22, 18, 0.14); background: var(--cream); color: var(--cream-ink); }
-.tone-cream :is(.quote, .case, .protocol-diagram, .standards, .standard, .steps4, .steps4 li, .wall figure) { --white: #f3f0ea; --body-text: #c8c3b9; --muted: #8d887f; --bronze: #b89b6a; --bronze-soft: #d2b88c; --line: rgba(184, 155, 106, 0.2); --rule: rgba(255, 255, 255, 0.08); color: var(--body-text); }
+.tone-cream { --white: #1a1612; --body-text: #4a4238; --muted: #6b6257; --bronze: #7a5b2a; --bronze-soft: #7a5b2a; --line: rgba(122, 91, 42, 0.32); --rule: rgba(26, 22, 18, 0.14); background: var(--cream); color: var(--cream-ink); }
 .section.tone-cream, .tone-cream + .section, .section + .tone-cream { border-top-color: transparent; }
 .testi-sec.tone-cream { background: var(--cream); }
 .tone-cream .strip-btn { border-color: rgba(26, 22, 18, 0.3); }
-.tone-cream .strip-btn:hover { border-color: #8a6a35; color: #8a6a35; }
+.tone-cream .strip-btn:hover { border-color: #7a5b2a; color: #7a5b2a; }
 .tone-cream .btn { background: var(--cream-ink); border-color: var(--cream-ink); color: var(--cream); }
 .tone-cream .btn:hover { background: #2c261f; border-color: #2c261f; }
 .tone-cream .btn-wall-all { box-shadow: 0 10px 30px rgba(26, 22, 18, 0.22); }
-.tone-cream .case { box-shadow: 0 18px 50px rgba(26, 22, 18, 0.18); }
 .tone-cream .t-dot { background: var(--cream); }
-.tone-cream .steps4, .tone-cream .standards, .tone-cream .protocol-diagram { box-shadow: 0 18px 50px rgba(26, 22, 18, 0.14); }
 
 /* Engagement was cream; it is the black band in the alternation, so it gets its dark look back */
 .engagement.tone-dark { background: transparent; color: var(--body-text); }
@@ -1118,3 +1115,10 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 }
 .engagement.tone-dark .guarantee { background: var(--ink); border: 1px solid var(--line); border-top: 3px solid var(--bronze); }
 .engagement.tone-dark .guarantee p:last-child { color: var(--muted) !important; }
+
+/* 25 Oct: cream sections are cream all the way. Cards are a lighter cream with dark text, no black boxes behind the photos */
+.tone-cream :is(.quote, .case, .standard, .steps4 li, .wall figure, .protocol-diagram) { background: #f9f3e3; }
+.tone-cream :is(.quote, .case, .wall figure) { border: 1px solid rgba(26, 22, 18, 0.12); box-shadow: 0 12px 34px rgba(26, 22, 18, 0.08); }
+.tone-cream .steps4, .tone-cream .standards, .tone-cream .protocol-diagram { border-color: rgba(26, 22, 18, 0.14); box-shadow: 0 12px 34px rgba(26, 22, 18, 0.06); }
+.tone-cream .steps4, .tone-cream .standards { background: rgba(26, 22, 18, 0.14); }
+.tone-cream .case-testi { border-color: rgba(26, 22, 18, 0.28); }
