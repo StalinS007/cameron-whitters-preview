@@ -1122,3 +1122,4 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .tone-cream .steps4, .tone-cream .standards, .tone-cream .protocol-diagram { border-color: rgba(26, 22, 18, 0.14); box-shadow: 0 12px 34px rgba(26, 22, 18, 0.06); }
 .tone-cream .steps4, .tone-cream .standards { background: rgba(26, 22, 18, 0.14); }
 .tone-cream .case-testi { border-color: rgba(26, 22, 18, 0.28); }
+.tone-cream .case { padding: clamp(18px, 2.4vw, 32px); }
