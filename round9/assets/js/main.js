@@ -60,32 +60,44 @@
   );
   $$(".reveal").forEach((el) => io.observe(el));
 
-  /* ---------- Strip arrows: one card per click, and they loop (Next on the last card goes back to the first, Previous on the first goes to the last) ---------- */
-  // Each arrow scrolls the strip named in data-target (default: the proof strip).
+  /* ---------- Strip arrows: one card per click, as a true carousel.
+     At either end the card from the far end is moved round to this side first (keeping the view pixel-identical),
+     then the strip glides one card. Positions come from the cards themselves, so nothing drifts or lands half-off. ---------- */
+  const stripBusy = new WeakMap();
   $$(".strip-btn").forEach((btn) =>
     btn.addEventListener("click", () => {
       const strip = $(btn.dataset.target || "#proofStrip");
-      if (!strip) return;
-      const tiles = $$("figure, blockquote", strip);
-      const tile = tiles[0];
-      const gap = parseFloat(getComputedStyle(strip).columnGap) || 0;
-      const step = tile ? tile.getBoundingClientRect().width + gap : 300;
+      if (!strip || stripBusy.get(strip)) return;
+      const tiles = () => $$(":scope > figure, :scope > blockquote", strip);
+      let cards = tiles();
+      if (cards.length < 2) return;
       const dir = Number(btn.dataset.dir);
-      const max = Math.max(0, strip.scrollWidth - strip.clientWidth);
-      let target = strip.scrollLeft + dir * step;
-      if (dir > 0 && strip.scrollLeft >= max - 4) target = 0;        // end: wrap to the first card
-      else if (dir < 0 && strip.scrollLeft <= 4) target = max;       // start: wrap to the last card
-      strip.scrollTo({ left: Math.max(0, Math.min(max, target)), behavior: reduceMotion ? "auto" : "smooth" });
-      // Safety net: if snapping ever leaves the strip between cards (a blank view), bring the nearest card back
-      setTimeout(() => {
-        const s = strip.getBoundingClientRect();
-        const seen = tiles.some((t) => { const r = t.getBoundingClientRect(); return r.right > s.left + 24 && r.left < s.right - 24; });
-        if (!seen && tiles.length) {
-          const mid = s.left + s.width / 2;
-          tiles.sort((x, y) => Math.abs(x.getBoundingClientRect().left + x.offsetWidth / 2 - mid) - Math.abs(y.getBoundingClientRect().left + y.offsetWidth / 2 - mid))[0]
-            .scrollIntoView({ inline: "center", block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
-        }
-      }, 900);
+      const left = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;   // card's scroll position
+      // the card currently at the left edge
+      let cur = 0, best = Infinity;
+      cards.forEach((c, i) => { const d = Math.abs(left(c) - strip.scrollLeft); if (d < best) { best = d; cur = i; } });
+      let next = cur + dir;
+      const savedSnap = strip.style.scrollSnapType;
+      strip.style.scrollSnapType = "none";
+      if (next >= cards.length) {               // past the end: bring the first card round to the end
+        const anchor = cards[cur], before = left(anchor);
+        strip.appendChild(cards[0]);
+        strip.scrollLeft += left(anchor) - before;
+        cards = tiles(); next = cards.indexOf(anchor) + 1;
+      } else if (next < 0) {                    // before the start: bring the last card round to the front
+        const anchor = cards[cur], before = left(anchor);
+        strip.insertBefore(cards[cards.length - 1], cards[0]);
+        strip.scrollLeft += left(anchor) - before;
+        cards = tiles(); next = cards.indexOf(anchor) - 1;
+      }
+      const target = left(cards[next]);
+      stripBusy.set(strip, true);
+      const done = () => { strip.style.scrollSnapType = savedSnap; stripBusy.set(strip, false); };
+      requestAnimationFrame(() => {
+        strip.scrollTo({ left: target, behavior: reduceMotion ? "auto" : "smooth" });
+        if ("onscrollend" in strip) strip.addEventListener("scrollend", done, { once: true });
+        setTimeout(done, 800);
+      });
     })
   );
 
