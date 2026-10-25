@@ -72,10 +72,21 @@
       const step = tile ? tile.getBoundingClientRect().width + gap : 300;
       const dir = Number(btn.dataset.dir);
       const max = Math.max(0, strip.scrollWidth - strip.clientWidth);
-      let target = strip.scrollLeft + dir * step;
-      if (dir > 0 && strip.scrollLeft >= max - 4) target = 0;        // end: wrap to the first card
-      else if (dir < 0 && strip.scrollLeft <= 4) target = max;       // start: wrap to the last card
-      strip.scrollTo({ left: Math.max(0, Math.min(max, target)), behavior: reduceMotion ? "auto" : "smooth" });
+      // True carousel: at either end, move a card from the far end round to this side (no visible jump), then glide on
+      const snap = strip.style.scrollSnapType;
+      if (dir > 0 && strip.scrollLeft >= max - 4 && tiles.length > 1) {
+        strip.style.scrollSnapType = "none";
+        strip.appendChild(tiles[0]);
+        strip.scrollLeft -= step;
+      } else if (dir < 0 && strip.scrollLeft <= 4 && tiles.length > 1) {
+        strip.style.scrollSnapType = "none";
+        strip.insertBefore(tiles[tiles.length - 1], tiles[0]);
+        strip.scrollLeft += step;
+      }
+      requestAnimationFrame(() => {
+        strip.scrollBy({ left: dir * step, behavior: reduceMotion ? "auto" : "smooth" });
+        setTimeout(() => { strip.style.scrollSnapType = snap; }, 700);
+      });
       // Safety net: if snapping ever leaves the strip between cards (a blank view), bring the nearest card back
       setTimeout(() => {
         const s = strip.getBoundingClientRect();
