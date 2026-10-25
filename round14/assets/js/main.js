@@ -32,8 +32,9 @@
     const y = window.scrollY;
     nav.classList.toggle("scrolled", y > 40);   // #26: on mobile the header also shrinks (CSS)
     const pastHero = heroBtn ? heroBtn.getBoundingClientRect().bottom < 0 : y > hero.offsetHeight - 120;
-    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open");
-    sticky.classList.toggle("show", pastHero && visibleCtas.size === 0 && !overlayOpen);
+    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open") || document.querySelector(".cwc");   // menu, viewer or cookie banner
+    const ctaOnScreen = inlineCtas.some((b) => { const r = b.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; });   // measured directly: never a frame late
+    sticky.classList.toggle("show", pastHero && !ctaOnScreen && !overlayOpen);
   };
   inlineCtas.forEach((b) => ctaIo.observe(b));
   onScroll();
@@ -71,7 +72,7 @@
     const clone = (card, i) => {
       const c = card.cloneNode(true);
       c.removeAttribute("id"); c.dataset.clone = String(i); c.setAttribute("aria-hidden", "true");
-      $$("img", c).forEach((img) => { img.loading = "eager"; });
+      $$("img", c).forEach((img) => { img.loading = i >= real.length - K ? "eager" : "lazy"; });   // the copies met when swiping backwards must already be loaded
       return c;
     };
     real.slice(-K).forEach((card, j) => strip.insertBefore(clone(card, real.length - K + j), strip.firstChild));
@@ -81,12 +82,15 @@
     const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
     strip.scrollLeft = pos(real[0]);                                 // start on the first real card
     // After any scroll settles on a clone, jump (instantly) to the real card it copies.
-    let settle, heading = null;   // heading = where the strip is on its way to (null once it has arrived)
+    let settle, heading = null, current = 0;   // heading = where the strip is on its way to (null once it has arrived); current = the real card in view
     const fix = () => {
       const x = strip.scrollLeft, first = pos(real[0]), last = pos(real[real.length - 1]);
       if (x < first - 2) strip.scrollLeft = x + span();
       else if (x > last + 2) strip.scrollLeft = x - span();
       heading = null;
+      current = ((Math.round((strip.scrollLeft - pos(real[0])) / pitch()) % real.length) + real.length) % real.length;
+      // iOS can ignore a position set while its own snap animation is still running: check once more shortly after
+      requestAnimationFrame(() => { const y = strip.scrollLeft; if (y < pos(real[0]) - 2 || y > pos(real[real.length - 1]) + 2) setTimeout(fix, 150); });
     };
     strip.addEventListener("scroll", () => { clearTimeout(settle); settle = setTimeout(fix, 120); }, { passive: true });
     if ("onscrollend" in strip) strip.addEventListener("scrollend", fix);
@@ -102,7 +106,13 @@
         strip.scrollTo({ left: heading, behavior: reduceMotion ? "auto" : "smooth" });
       })
     );
-    window.addEventListener("resize", () => { strip.scrollLeft = pos(real[0]); });
+    // Keep the visitor's place when the width really changes (phones fire resize just from the address bar collapsing)
+    let lastW = window.innerWidth;
+    window.addEventListener("resize", () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      strip.scrollLeft = pos(real[current]); heading = null;   // same card, re-aligned for the new width
+    });
   });
 
   /* ---------- VSL: our own player. The poster and bronze play button show until the first click,
@@ -202,6 +212,13 @@
     })
   );
   const closeLb = () => { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); onScroll(); };
+  let tx = null;
+  lb.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener("touchend", (e) => {
+    if (tx == null) return;
+    const dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 40 && group.length > 1) { show(dx < 0 ? idx + 1 : idx - 1); e.preventDefault(); }
+  });
   lb.addEventListener("click", (e) => { if (!e.target.closest(".lb-nav")) closeLb(); });
   $(".lb-prev", lb).addEventListener("click", () => show(idx - 1));
   $(".lb-next", lb).addEventListener("click", () => show(idx + 1));

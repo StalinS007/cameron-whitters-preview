@@ -1053,7 +1053,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 /* 24 Oct (Cameron's Loom): About photos blend into the page instead of sitting in a box */
 .about-c-media { border: 0; background: transparent; }
-.about-slides {
+.about-slides-mask {   /* the fade lives on a non-scrolling wrapper: masked scroll containers flicker on iOS */
+  position: absolute; inset: 0;
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
@@ -1120,3 +1121,9 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 .tone-cream .case { padding: clamp(18px, 2.4vw, 32px); }
 .tone-cream .case-copy { padding: clamp(22px, 2.8vw, 42px); }
 .tone-cream .case-nums.four b { font-size: clamp(18px, 1.8vw, 26px); }
+
+/* 25 Oct audit: menu links land below the fixed header; the strip never bounces the page sideways */
+html { scroll-padding-top: 96px; }
+@media (max-width: 860px) { html { scroll-padding-top: 76px; } }
+.quotes-strip { overscroll-behavior-x: contain; }
+.lightbox img { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
