@@ -1127,3 +1127,6 @@ html { scroll-padding-top: 96px; }
 @media (max-width: 860px) { html { scroll-padding-top: 76px; } }
 .quotes-strip { overscroll-behavior-x: contain; }
 .lightbox img { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+/* 25 Oct audit: comfortable thumb targets for the viewer's close button and the header logo */
+.lightbox .lb-close { min-width: 44px; min-height: 44px; display: grid; place-items: center; top: 12px; right: 12px; }
+.logo { padding: 10px 0; margin: -10px 0; }
