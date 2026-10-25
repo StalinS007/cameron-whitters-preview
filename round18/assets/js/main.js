@@ -80,8 +80,8 @@
     for (let i = real.length - K; i < real.length; i++) strip.insertBefore(clone(real[i], i), strip.children[i - (real.length - K)] || null);
     // End copies: the first K cards, in order
     real.slice(0, K).forEach((card, j) => strip.appendChild(clone(card, j)));
-    // The cards a silent step can land on must already be loaded and decoded: the last K real cards (the first K are on screen from the start)
-    real.slice(-K).forEach((card) => $$("img", card).forEach(ready));
+    // Every card must already be loaded and decoded before it can be stepped or jumped to, so no card ever appears mid-load
+    real.forEach((card) => $$("img", card).forEach(ready));
     const pitch = () => real[1].getBoundingClientRect().left - real[0].getBoundingClientRect().left;
     const span = () => pitch() * real.length;                       // width of the eight real cards
     const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
