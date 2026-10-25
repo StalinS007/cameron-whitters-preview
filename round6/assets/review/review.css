@@ -1,0 +1,68 @@
+/* REVIEW MARKERS for Cameron's edits. Delete before publishing. */
+.rv-removed { display: none; }
+.rv-on .rv-removed:not([hidden]) {
+  display: block; max-width: 900px; margin: 24px auto; padding: 12px 16px 12px 58px; position: relative;
+  border: 1px dashed #e0665a; background: rgba(224, 102, 90, 0.1); color: #f2b3ab;
+  font: 500 13.5px/1.5 Inter, system-ui, sans-serif; text-align: left;
+}
+.rv-on .rv-removed:not([hidden])::before { content: "✕"; position: absolute; left: 0; top: 0; bottom: 0; width: 46px; display: grid; place-items: center; background: #e0665a; color: #1a0f0d; font: 800 18px/1 Inter, system-ui, sans-serif; }
+.engagement .rv-removed:not([hidden]) { color: #8c2f25; background: rgba(224, 102, 90, 0.12); }
+
+.rv-on .rv-target { outline: 2px dashed rgba(240, 196, 110, 0.75); outline-offset: 4px; }
+.rv-on .hero .rv-target, .rv-on .rv-target .rv-target { outline-offset: 2px; }
+.rv-badge { display: none; }
+.rv-on .rv-badge {
+  display: grid; place-items: center; position: absolute; left: -10px; top: -12px; z-index: 40;
+  min-width: 34px; height: 26px; padding: 0 7px; border-radius: 13px; border: 2px solid #0b0b0b;
+  background: #f0c46e; color: #0b0b0b; font: 800 12.5px/1 Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none;
+  cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45); transition: transform .15s;
+}
+.rv-on .rv-badge:hover { transform: scale(1.12); }
+.rv-on .rv-badge.rv-right { left: auto; right: -10px; }
+.rv-on .rv-badge.rv-check { background: #ffd98a; box-shadow: 0 0 0 3px rgba(255, 217, 138, 0.35), 0 2px 10px rgba(0, 0, 0, .45); }
+.rv-on .rv-badge.rv-needs { background: #ff8f7a; box-shadow: 0 0 0 3px rgba(255, 143, 122, 0.35), 0 2px 10px rgba(0, 0, 0, .45); }
+.rv-on [data-edit-pos="inside"] > .rv-badge { left: 14px; top: 14px; }
+.rv-on .nav > .rv-badge { top: auto; bottom: -14px; right: 18px; left: auto; }
+.rv-on .proof-strip-sec, .rv-on .band, .rv-on .engagement { outline-offset: -6px; }
+.rv-flash { animation: rvFlash 1.4s ease 2; }
+@keyframes rvFlash { 0%, 100% { outline-color: rgba(240, 196, 110, 0.75); } 50% { outline-color: #fff; outline-width: 4px; } }
+
+.rv-pop { position: fixed; z-index: 1000; background: #fdf8ee; color: #1a1612; border-radius: 12px; box-shadow: 0 16px 50px rgba(0, 0, 0, .55); font: 400 14px/1.5 Inter, system-ui, sans-serif; overflow: hidden; text-align: left; }
+.rv-pop-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 40px 10px 14px; background: #1a1612; color: #fdf8ee; position: relative; }
+.rv-pop-head b { font-weight: 700; font-size: 14.5px; }
+.rv-x { position: absolute; right: 8px; top: 6px; background: none; border: 0; color: #fdf8ee; font-size: 22px; cursor: pointer; line-height: 1; }
+.rv-num { display: inline-grid; place-items: center; min-width: 32px; height: 24px; padding: 0 6px; border-radius: 12px; background: #f0c46e; color: #0b0b0b; font-weight: 800; font-size: 12.5px; flex: none; }
+.rv-chip { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.rv-chip.rv-done { background: #d9f2e3; color: #0b6b3a; }
+.rv-chip.rv-check { background: #fff0c9; color: #7a5600; }
+.rv-chip.rv-needs { background: #ffe1dc; color: #a12a1a; }
+.rv-sec { padding: 10px 14px; border-top: 1px solid #ece2cf; }
+.rv-sec i { display: block; font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #8a6a35; margin-bottom: 3px; }
+.rv-sec p { margin: 0; }
+.rv-before p { color: #8c2f25; text-decoration: line-through; text-decoration-color: rgba(140, 47, 37, .45); }
+.rv-ask { background: #f6eedb; }
+.rv-ask p { font-size: 13px; color: #4a4238; }
+
+.rv-panel { position: fixed; left: 14px; bottom: 14px; z-index: 999; font: 400 14px/1.45 Inter, system-ui, sans-serif; color: #1a1612; max-width: calc(100vw - 28px); }
+.rv-bar { display: flex; gap: 8px; align-items: center; background: #f0c46e; border: 2px solid #0b0b0b; border-radius: 999px; padding: 4px 6px 4px 4px; box-shadow: 0 6px 24px rgba(0, 0, 0, .5); width: max-content; }
+.rv-open { background: #0b0b0b; color: #f0c46e; border: 0; border-radius: 999px; padding: 8px 14px; font: 700 13px/1 Inter, system-ui, sans-serif; cursor: pointer; }
+.rv-open b { background: #f0c46e; color: #0b0b0b; border-radius: 999px; padding: 2px 7px; margin-left: 4px; }
+.rv-toggle { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; cursor: pointer; padding-right: 6px; }
+.rv-list { position: absolute; left: 0; bottom: 52px; width: min(440px, calc(100vw - 28px)); max-height: min(72vh, 680px); overflow: auto; background: #fdf8ee; border-radius: 14px; box-shadow: 0 18px 60px rgba(0, 0, 0, .6); }
+.rv-list-head { position: sticky; top: 0; background: #1a1612; color: #fdf8ee; padding: 12px 14px; display: grid; gap: 6px; z-index: 1; }
+.rv-list-head span { font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.rv-list-head small { font-size: 11.5px; color: #cfc6b4; }
+.rv-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.rv-dot.rv-done { background: #5fd193; } .rv-dot.rv-check { background: #ffd98a; } .rv-dot.rv-needs { background: #ff8f7a; }
+.rv-list > ol { list-style: none; margin: 0; padding: 0; }
+.rv-list > ol > li { display: flex; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #ece2cf; cursor: pointer; }
+.rv-list > ol > li:hover { background: #f6eedb; }
+.rv-list > ol > li > div { min-width: 0; }
+.rv-list > ol > li b { font-weight: 700; margin-right: 6px; }
+.rv-list > ol > li p { margin: 3px 0 0; font-size: 12.5px; color: #4a4238; }
+.rv-order { margin: 6px 0 0; padding-left: 18px; font-size: 12px; color: #4a4238; }
+@media (max-width: 860px) { .rv-on .sticky-bar { bottom: 0; } .rv-panel { bottom: 76px; } }
+.rv-todo { padding: 12px 14px 16px; background: #f6eedb; border-top: 2px solid #c9a96e; }
+.rv-todo b { display: block; font-size: 13px; margin-bottom: 6px; color: #1a1612; }
+.rv-todo ol { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.rv-todo li { font-size: 12.5px; color: #4a4238; }
