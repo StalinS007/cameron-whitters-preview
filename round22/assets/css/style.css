@@ -1140,3 +1140,6 @@ html { scroll-padding-top: 96px; }
   mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 90%, transparent 100%);
   mask-composite: intersect;
 }
+
+/* 25 Oct: once scrolled, the header's backdrop blur made it the box the full-screen menu is sized to, so the open menu was only header-high and its links spilled over the page. No blur while the menu is open. */
+.nav.open { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
