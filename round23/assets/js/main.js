@@ -113,10 +113,13 @@
     );
     // Keep the visitor's place when the width really changes (phones fire resize just from the address bar collapsing)
     let lastW = window.innerWidth;
+    let rz;
+    const realign = () => { strip.scrollLeft = pos(real[current]); heading = null; };   // same card, re-aligned for the new width
     window.addEventListener("resize", () => {
       if (window.innerWidth === lastW) return;
       lastW = window.innerWidth;
-      strip.scrollLeft = pos(real[current]); heading = null;   // same card, re-aligned for the new width
+      realign();
+      clearTimeout(rz); rz = setTimeout(realign, 200);   // and again once the rotated layout has settled
     });
   });
 

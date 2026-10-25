@@ -5,14 +5,10 @@
    - window.CWConsent is the adapter the package expects: isGranted(), subscribe(cb), getReceipt().
    - The Pixel (CSW Fitness Market Data, 1073988224464549) is never loaded without consent,
      and only after the page calls window.CWReleasePixel() (after bootstrap has cleaned the URL).
-   - Each grant / decline / withdrawal is sent to CONSENT_WEBHOOK (a Zapier Catch Hook) with an
-     opaque consent ID, so the backend can verify current consent. Empty = no logging yet.
-   - When CONSENT_ENDPOINT is set (Cameron's Cloudflare consent Worker, tools/consent-worker), each change
-     goes there instead, with a unique event ID and a per-visitor revision; the Worker keeps the permanent
-     record and forwards to Zapier. */
+   - Each choice is sent to CONSENT_ENDPOINT with an opaque receipt, event ID and revision.
+     Delivery acknowledgement and concurrent revision reconciliation remain separate work. */
 (function () {
   "use strict";
-  var CONSENT_WEBHOOK = "";   // PREVIEW COPY: consent clicks are not sent to Zapier
   var CONSENT_ENDPOINT = "";   // PREVIEW COPY: consent clicks are not recorded
   var PIXEL_ID = "1073988224464549";
   var PIXEL_HOSTS = ["www.cameronwhitters.com", "cameronwhitters.com"]   // PREVIEW COPY: Pixel never fires here;
@@ -40,7 +36,7 @@
     getReceipt: function () { return state && state.id ? String(state.id).replace(/[^A-Za-z0-9_-]/g, "") : ""; },
   };
 
-  function log(status) {
+  function log() {
     if (CONSENT_ENDPOINT) {
       var evt = JSON.stringify({
         consent_id: state.id, event_id: newId(), revision: state.rev, choice: state.advertising, purpose: "advertising",
@@ -49,16 +45,16 @@
       try { fetch(CONSENT_ENDPOINT, { method: "POST", keepalive: true, headers: { "Content-Type": "text/plain" }, body: evt }); } catch (e) {}
       return;
     }
-    if (!CONSENT_WEBHOOK) return;
-    var body = JSON.stringify({
-      consent_id: state.id, status: status, purpose: "advertising", policy_version: POLICY_VERSION,
-      occurred_at: new Date().toISOString(), page: location.origin + location.pathname,
-    });
-    try { fetch(CONSENT_WEBHOOK, { method: "POST", mode: "no-cors", keepalive: true, headers: { "Content-Type": "text/plain" }, body: body }); } catch (e) {}
+
   }
 
   function loadPixel() {
-    if (pixelLoaded || !pixelReady || !granted() || PIXEL_HOSTS.indexOf(location.hostname) === -1) return;
+    if (!pixelReady || !granted() || PIXEL_HOSTS.indexOf(location.hostname) === -1) return;
+    if (pixelLoaded) {
+      // Re-grant the existing Pixel without another init or PageView.
+      if (typeof window.fbq === "function") window.fbq("consent", "grant");
+      return;
+    }
     pixelLoaded = true;
     /* Standard Meta Pixel base code */
     !function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
@@ -83,12 +79,30 @@
     var wasGranted = granted();
     state = { id: (state && state.id) || newId(), advertising: advertising, at: new Date().toISOString(), v: POLICY_VERSION, rev: ((state && state.rev) || 0) + 1 };
     write(state);
-    log(advertising === "granted" ? "granted" : wasGranted ? "withdrawn" : "declined");
+    log();
     if (advertising === "granted") loadPixel();
     else if (wasGranted) { if (window.fbq) window.fbq("consent", "revoke"); clearMetaCookies(); }
     listeners.slice().forEach(function (cb) { try { cb(granted()); } catch (e) {} });
     hide();
   }
+
+  // A storage event is generated in the other tabs, never the writing tab.
+  // Synchronization changes local behavior only; it must not repost the choice.
+  window.addEventListener("storage", function (event) {
+    if (event.key !== KEY && event.key !== null) return;
+    if (event.storageArea && event.storageArea !== localStorage) return;
+    var wasGranted = granted();
+    state = read();
+    if (granted()) {
+      if (!wasGranted) loadPixel();
+    } else {
+      if (wasGranted && typeof window.fbq === "function") window.fbq("consent", "revoke");
+      clearMetaCookies();
+    }
+    listeners.slice().forEach(function (cb) { try { cb(granted()); } catch (e) {} });
+    if (box) show(true);
+    else if (!state || state.v !== POLICY_VERSION) show(false);
+  });
 
   /* ---------- Banner UI (self-contained styles so it works on every page) ---------- */
   var css = ".cwc{position:fixed;z-index:70;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;background:#121212;border:1px solid rgba(184,155,106,.45);color:#c8c3b9;font:13px/1.4 Inter,system-ui,-apple-system,Helvetica,Arial,sans-serif;padding:10px 10px 10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.55);display:flex;align-items:center;gap:12px}" +

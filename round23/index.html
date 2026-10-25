@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0b0b0b" />
   <meta name="referrer" content="origin" />
   <!-- Cookie consent + Meta Pixel gate. Must load first (Cameron's integration package). -->
-  <script src="assets/js/consent.js?v=20261024a"></script>
+  <script src="assets/js/consent.js?v=20261025-consent-fixes-1"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -420,10 +420,10 @@
 
   <!-- Campaign attribution (Cameron's package). Runs after the saved consent is known; the Pixel is released only afterwards and only with consent. -->
   <script type="module">
-    import './cw-site-bootstrap.mjs';
+    import './cw-site-bootstrap.mjs?v=20261025-consent-fixes-1';
     window.CWReleasePixel && window.CWReleasePixel();
   </script>
-  <script src="assets/js/main.js?v=20261025k"></script>
+  <script src="assets/js/main.js?v=20261025l"></script>
   <script src="assets/review/review.js?v=d1556c28"></script>
 </body>
 </html>

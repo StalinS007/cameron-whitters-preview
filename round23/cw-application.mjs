@@ -103,6 +103,7 @@ export function createAttribution({
   let first = observed.touch;
   let latest = observed.touch;
   let active = null;
+  let activeReceipt = '';
   let grantTime = '';
   let sent = new Set();
   const listeners = new Set();
@@ -111,9 +112,12 @@ export function createAttribution({
   }
   function syncConsent() {
     const granted = hasConsent();
-    if (granted === active) return;
+    let receipt = '';
+    if (granted) { try { receipt = safeId(consent.getReceipt?.()); } catch {} }
+    if (granted === active && receipt === activeReceipt) return;
     const previous = active;
     active = granted;
+    activeReceipt = receipt;
     if (granted) {
       grantTime = now();
       try {
@@ -254,11 +258,12 @@ export function mountApplication({
     });
   }
   const unsubscribe = attribution.subscribe(granted => {
-    if (!granted && !destroyed) {
-      // Remove the old iframe so stale hidden fields cannot be used after withdrawal.
-      // This resets unfinished form progress; the host CMP must explain that consequence.
+    if (!destroyed) {
+      // Each iframe receives a snapshot of hidden fields. Refresh it on both
+      // grant and withdrawal so that the active consent/receipt is represented.
+      // This resets unfinished form progress; the host must explain that consequence.
       render();
-      report('consent_revoked_form_restarted');
+      report(granted ? 'consent_granted_form_restarted' : 'consent_revoked_form_restarted');
     }
   });
   render();
