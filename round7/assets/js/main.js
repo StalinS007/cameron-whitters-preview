@@ -60,17 +60,32 @@
   );
   $$(".reveal").forEach((el) => io.observe(el));
 
-  /* ---------- Proof strip arrows (#3) ---------- */
+  /* ---------- Strip arrows: one card per click, and they loop (Next on the last card goes back to the first, Previous on the first goes to the last) ---------- */
   // Each arrow scrolls the strip named in data-target (default: the proof strip).
   $$(".strip-btn").forEach((btn) =>
     btn.addEventListener("click", () => {
       const strip = $(btn.dataset.target || "#proofStrip");
       if (!strip) return;
-      const tile = strip.querySelector("figure, blockquote");
+      const tiles = $$("figure, blockquote", strip);
+      const tile = tiles[0];
       const gap = parseFloat(getComputedStyle(strip).columnGap) || 0;
       const step = tile ? tile.getBoundingClientRect().width + gap : 300;
-      // Guide: arrows advance and snap to one complete card
-      strip.scrollBy({ left: Number(btn.dataset.dir) * step, behavior: reduceMotion ? "auto" : "smooth" });
+      const dir = Number(btn.dataset.dir);
+      const max = Math.max(0, strip.scrollWidth - strip.clientWidth);
+      let target = strip.scrollLeft + dir * step;
+      if (dir > 0 && strip.scrollLeft >= max - 4) target = 0;        // end: wrap to the first card
+      else if (dir < 0 && strip.scrollLeft <= 4) target = max;       // start: wrap to the last card
+      strip.scrollTo({ left: Math.max(0, Math.min(max, target)), behavior: reduceMotion ? "auto" : "smooth" });
+      // Safety net: if snapping ever leaves the strip between cards (a blank view), bring the nearest card back
+      setTimeout(() => {
+        const s = strip.getBoundingClientRect();
+        const seen = tiles.some((t) => { const r = t.getBoundingClientRect(); return r.right > s.left + 24 && r.left < s.right - 24; });
+        if (!seen && tiles.length) {
+          const mid = s.left + s.width / 2;
+          tiles.sort((x, y) => Math.abs(x.getBoundingClientRect().left + x.offsetWidth / 2 - mid) - Math.abs(y.getBoundingClientRect().left + y.offsetWidth / 2 - mid))[0]
+            .scrollIntoView({ inline: "center", block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+        }
+      }, 900);
     })
   );
 
