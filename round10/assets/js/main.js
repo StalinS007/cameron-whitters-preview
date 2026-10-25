@@ -60,45 +60,52 @@
   );
   $$(".reveal").forEach((el) => io.observe(el));
 
-  /* ---------- Strip arrows: one card per click, and they loop (Next on the last card goes back to the first, Previous on the first goes to the last) ---------- */
-  // Each arrow scrolls the strip named in data-target (default: the proof strip).
-  $$(".strip-btn").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      const strip = $(btn.dataset.target || "#proofStrip");
-      if (!strip) return;
-      const tiles = $$("figure, blockquote", strip);
-      const tile = tiles[0];
-      const gap = parseFloat(getComputedStyle(strip).columnGap) || 0;
-      const step = tile ? tile.getBoundingClientRect().width + gap : 300;
-      const dir = Number(btn.dataset.dir);
-      const max = Math.max(0, strip.scrollWidth - strip.clientWidth);
-      // True carousel: at either end, move a card from the far end round to this side (no visible jump), then glide on
-      const snap = strip.style.scrollSnapType;
-      if (dir > 0 && strip.scrollLeft >= max - 4 && tiles.length > 1) {
-        strip.style.scrollSnapType = "none";
-        strip.appendChild(tiles[0]);
-        strip.scrollLeft -= step;
-      } else if (dir < 0 && strip.scrollLeft <= 4 && tiles.length > 1) {
-        strip.style.scrollSnapType = "none";
-        strip.insertBefore(tiles[tiles.length - 1], tiles[0]);
-        strip.scrollLeft += step;
-      }
-      requestAnimationFrame(() => {
-        strip.scrollBy({ left: dir * step, behavior: reduceMotion ? "auto" : "smooth" });
-        setTimeout(() => { strip.style.scrollSnapType = snap; }, 700);
-      });
-      // Safety net: if snapping ever leaves the strip between cards (a blank view), bring the nearest card back
-      setTimeout(() => {
-        const s = strip.getBoundingClientRect();
-        const seen = tiles.some((t) => { const r = t.getBoundingClientRect(); return r.right > s.left + 24 && r.left < s.right - 24; });
-        if (!seen && tiles.length) {
-          const mid = s.left + s.width / 2;
-          tiles.sort((x, y) => Math.abs(x.getBoundingClientRect().left + x.offsetWidth / 2 - mid) - Math.abs(y.getBoundingClientRect().left + y.offsetWidth / 2 - mid))[0]
-            .scrollIntoView({ inline: "center", block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
-        }
-      }, 900);
-    })
-  );
+  /* ---------- Testimonial strip: a seamless loop.
+     The last three cards are cloned in front and the first three after, so the strip never has an end.
+     The browser's own snapping stays on the whole time (so swiping and the arrows feel identical). When the strip
+     settles on a clone it is moved, with no animation, to the matching real card: the picture is identical, so nothing visibly changes. ---------- */
+  $$(".quotes-strip").forEach((strip) => {
+    const real = $$(":scope > blockquote, :scope > figure", strip);
+    if (real.length < 2) return;
+    const K = Math.min(3, real.length);
+    const clone = (card, i) => {
+      const c = card.cloneNode(true);
+      c.removeAttribute("id"); c.dataset.clone = String(i); c.setAttribute("aria-hidden", "true");
+      $$("img", c).forEach((img) => { img.loading = "eager"; });
+      $$("[data-lb]", c).forEach((el) => el.addEventListener("click", () => $("[data-lb]", real[i]).click()));   // a clone's photo opens the real card's picture
+      return c;
+    };
+    real.slice(-K).forEach((card, j) => strip.insertBefore(clone(card, real.length - K + j), strip.firstChild));
+    real.slice(0, K).forEach((card, j) => strip.appendChild(clone(card, j)));
+    const pitch = () => real[1].getBoundingClientRect().left - real[0].getBoundingClientRect().left;
+    const span = () => pitch() * real.length;                       // width of the eight real cards
+    const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+    strip.scrollLeft = pos(real[0]);                                 // start on the first real card
+    // After any scroll settles on a clone, jump (instantly) to the real card it copies.
+    let settle;
+    const fix = () => {
+      const x = strip.scrollLeft, first = pos(real[0]), last = pos(real[real.length - 1]);
+      if (x < first - 2) strip.scrollLeft = x + span();
+      else if (x > last + 2) strip.scrollLeft = x - span();
+    };
+    strip.addEventListener("scroll", () => { clearTimeout(settle); settle = setTimeout(fix, 120); }, { passive: true });
+    if ("onscrollend" in strip) strip.addEventListener("scrollend", fix);
+    // Arrows: one card per click, from the position the strip is heading to (so quick taps queue up cleanly)
+    let heading = null;
+    $$('.strip-btn[data-target="#' + strip.id + '"]').forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const dir = Number(btn.dataset.dir), p = pitch();
+        const from = heading == null ? strip.scrollLeft : heading;
+        let to = Math.round(from / p) * p + dir * p;
+        const first = pos(real[0]), last = pos(real[real.length - 1]);
+        if (to < first - p * (K - 1) || to > last + p * (K - 1)) { fix(); to = Math.round(strip.scrollLeft / p) * p + dir * p; }
+        heading = to;
+        strip.scrollTo({ left: to, behavior: reduceMotion ? "auto" : "smooth" });
+        clearTimeout(strip._hd); strip._hd = setTimeout(() => { heading = null; }, 700);
+      })
+    );
+    window.addEventListener("resize", () => { strip.scrollLeft = pos(real[0]); });
+  });
 
   /* ---------- VSL: our own player. The poster and bronze play button show until the first click,
      then the hosted 1080p file plays in place with the browser's own controls (sound allowed: it starts from a click) ---------- */
@@ -184,7 +191,7 @@
   $$("[data-lb]").forEach((el) =>
     el.addEventListener("click", () => {
       const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases, .about-c-media");
-      group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null) : [el];
+      group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null && !g.closest("[data-clone]")) : [el];
       if (!group.includes(el)) group = [el];
       lb.classList.toggle("single", group.length < 2);
       show(group.indexOf(el));
