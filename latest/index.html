@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Preview: latest</title>
+<style>body{background:#0b0b0b;color:#c8c3b9;font:15px system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;text-align:center}a{color:#d2b88c}</style></head>
+<body><p id="m">Opening the latest preview&hellip;</p>
+<script>
+var t = Date.now();
+fetch("../latest.txt?ts=" + t, { cache: "no-store" }).then(function (r) { return r.text(); }).then(function (x) {
+  var d = x.trim(), base = location.pathname.replace(/latest\/?$/, "");
+  location.replace(base + (d && d !== "." ? d + "/" : "") + "?v=" + t + location.hash);
+}).catch(function () { document.getElementById("m").innerHTML = 'Could not load the latest preview. <a href="../">Open the main preview</a>'; });
+</script><noscript><p><a href="../">Open the preview</a></p></noscript></body></html>
