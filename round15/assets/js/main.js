@@ -33,7 +33,8 @@
     nav.classList.toggle("scrolled", y > 40);   // #26: on mobile the header also shrinks (CSS)
     const pastHero = heroBtn ? heroBtn.getBoundingClientRect().bottom < 0 : y > hero.offsetHeight - 120;
     const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open") || document.querySelector(".cwc");   // menu, viewer or cookie banner
-    sticky.classList.toggle("show", pastHero && visibleCtas.size === 0 && !overlayOpen);
+    const ctaOnScreen = inlineCtas.some((b) => { const r = b.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; });   // measured directly: never a frame late
+    sticky.classList.toggle("show", pastHero && !ctaOnScreen && !overlayOpen);
   };
   inlineCtas.forEach((b) => ctaIo.observe(b));
   onScroll();
@@ -81,12 +82,13 @@
     const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
     strip.scrollLeft = pos(real[0]);                                 // start on the first real card
     // After any scroll settles on a clone, jump (instantly) to the real card it copies.
-    let settle, heading = null;   // heading = where the strip is on its way to (null once it has arrived)
+    let settle, heading = null, current = 0;   // heading = where the strip is on its way to (null once it has arrived); current = the real card in view
     const fix = () => {
       const x = strip.scrollLeft, first = pos(real[0]), last = pos(real[real.length - 1]);
       if (x < first - 2) strip.scrollLeft = x + span();
       else if (x > last + 2) strip.scrollLeft = x - span();
       heading = null;
+      current = ((Math.round((strip.scrollLeft - pos(real[0])) / pitch()) % real.length) + real.length) % real.length;
       // iOS can ignore a position set while its own snap animation is still running: check once more shortly after
       requestAnimationFrame(() => { const y = strip.scrollLeft; if (y < pos(real[0]) - 2 || y > pos(real[real.length - 1]) + 2) setTimeout(fix, 150); });
     };
@@ -109,9 +111,7 @@
     window.addEventListener("resize", () => {
       if (window.innerWidth === lastW) return;
       lastW = window.innerWidth;
-      const p = pitch(), idx = Math.round((strip.scrollLeft - pos(real[0])) / p);
-      const n = ((idx % real.length) + real.length) % real.length;
-      strip.scrollLeft = pos(real[n]); heading = null;
+      strip.scrollLeft = pos(real[current]); heading = null;   // same card, re-aligned for the new width
     });
   });
 
