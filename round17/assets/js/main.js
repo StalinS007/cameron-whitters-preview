@@ -69,14 +69,19 @@
     const real = $$(":scope > blockquote, :scope > figure", strip);
     if (real.length < 2) return;
     const K = Math.min(3, real.length);
+    const ready = (img) => { img.loading = "eager"; const dec = () => { if (img.decode) img.decode().catch(() => {}); }; img.complete ? dec() : img.addEventListener("load", dec, { once: true }); };
     const clone = (card, i) => {
       const c = card.cloneNode(true);
       c.removeAttribute("id"); c.dataset.clone = String(i); c.setAttribute("aria-hidden", "true");
-      $$("img", c).forEach((img) => { img.loading = i >= real.length - K ? "eager" : "lazy"; });   // the copies met when swiping backwards must already be loaded
+      $$("img", c).forEach(ready);
       return c;
     };
-    real.slice(-K).forEach((card, j) => strip.insertBefore(clone(card, real.length - K + j), strip.firstChild));
+    // Front copies: the last K cards, inserted so they read ...Meylad, Michael, Stefan, then the real Jourdon (insert in reverse, each at the very front)
+    for (let i = real.length - K; i < real.length; i++) strip.insertBefore(clone(real[i], i), strip.children[i - (real.length - K)] || null);
+    // End copies: the first K cards, in order
     real.slice(0, K).forEach((card, j) => strip.appendChild(clone(card, j)));
+    // Every card must already be loaded and decoded before it can be stepped or jumped to, so no card ever appears mid-load
+    real.forEach((card) => $$("img", card).forEach(ready));
     const pitch = () => real[1].getBoundingClientRect().left - real[0].getBoundingClientRect().left;
     const span = () => pitch() * real.length;                       // width of the eight real cards
     const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
