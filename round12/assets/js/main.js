@@ -72,7 +72,6 @@
       const c = card.cloneNode(true);
       c.removeAttribute("id"); c.dataset.clone = String(i); c.setAttribute("aria-hidden", "true");
       $$("img", c).forEach((img) => { img.loading = "eager"; });
-      $$("[data-lb]", c).forEach((el) => el.addEventListener("click", () => $("[data-lb]", real[i]).click()));   // a clone's photo opens the real card's picture
       return c;
     };
     real.slice(-K).forEach((card, j) => strip.insertBefore(clone(card, real.length - K + j), strip.firstChild));
@@ -82,26 +81,25 @@
     const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
     strip.scrollLeft = pos(real[0]);                                 // start on the first real card
     // After any scroll settles on a clone, jump (instantly) to the real card it copies.
-    let settle;
+    let settle, heading = null;   // heading = where the strip is on its way to (null once it has arrived)
     const fix = () => {
       const x = strip.scrollLeft, first = pos(real[0]), last = pos(real[real.length - 1]);
       if (x < first - 2) strip.scrollLeft = x + span();
       else if (x > last + 2) strip.scrollLeft = x - span();
+      heading = null;
     };
     strip.addEventListener("scroll", () => { clearTimeout(settle); settle = setTimeout(fix, 120); }, { passive: true });
     if ("onscrollend" in strip) strip.addEventListener("scrollend", fix);
-    // Arrows: one card per click, from the position the strip is heading to (so quick taps queue up cleanly)
-    let heading = null;
+    // Arrows: one card per click, measured from where the strip is heading, so taps queue up cleanly even on a slow phone
     $$('.strip-btn[data-target="#' + strip.id + '"]').forEach((btn) =>
       btn.addEventListener("click", () => {
         const dir = Number(btn.dataset.dir), p = pitch();
-        const from = heading == null ? strip.scrollLeft : heading;
-        let to = Math.round(from / p) * p + dir * p;
         const first = pos(real[0]), last = pos(real[real.length - 1]);
-        if (to < first - p * (K - 1) || to > last + p * (K - 1)) { fix(); to = Math.round(strip.scrollLeft / p) * p + dir * p; }
-        heading = to;
-        strip.scrollTo({ left: to, behavior: reduceMotion ? "auto" : "smooth" });
-        clearTimeout(strip._hd); strip._hd = setTimeout(() => { heading = null; }, 700);
+        let from = heading == null ? strip.scrollLeft : heading;
+        if (from < first - 2) from += span(); else if (from > last + 2) from -= span();   // normalise onto the real cards
+        if (Math.abs(from - strip.scrollLeft) > p * (K - 1)) { strip.scrollLeft = from; }    // land there now if a wrap is needed first
+        heading = Math.round(from / p) * p + dir * p;
+        strip.scrollTo({ left: heading, behavior: reduceMotion ? "auto" : "smooth" });
       })
     );
     window.addEventListener("resize", () => { strip.scrollLeft = pos(real[0]); });
@@ -188,8 +186,11 @@
     lbImg.alt = img.alt;
     lbCap.textContent = el.dataset.lb;
   };
-  $$("[data-lb]").forEach((el) =>
-    el.addEventListener("click", () => {
+  $$("[data-lb]").forEach((trigger) =>
+    trigger.addEventListener("click", () => {
+      let el = trigger;
+      const cl = el.closest("[data-clone]");   // a cloned testimonial card stands in for its real one
+      if (cl) { const realCard = $$(":scope > :not([data-clone])", cl.parentElement)[Number(cl.dataset.clone)]; el = (realCard && $("[data-lb]", realCard)) || el; }
       const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases, .about-c-media");
       group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null && !g.closest("[data-clone]")) : [el];
       if (!group.includes(el)) group = [el];
