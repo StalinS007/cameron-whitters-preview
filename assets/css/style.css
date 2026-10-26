@@ -731,13 +731,13 @@ body { line-height: 1.62; }
 
 /* Recognition (cream): one intro, one headline, five moments, one closing line */
 .recognition .section-head { margin-bottom: clamp(36px, 5vw, 64px); }
-.recog-title { font-size: clamp(26px, 2.8vw, 40px); font-weight: 600; line-height: 1.05; color: var(--cream-ink); }
+.recog-title { font-size: clamp(26px, 2.8vw, 40px); font-weight: 600; line-height: 1.05; color: var(--white); }
 .cream .mirror-list { border-top-color: rgba(26, 22, 18, 0.16); }
 .cream .mirror-list li { color: var(--cream-ink); border-bottom-color: rgba(26, 22, 18, 0.16); font-weight: 400; font-size: clamp(18px, 1.6vw, 22px); }
 .cream .mirror-list li::before { background: #8a6a35; }
 .closing-line { font-family: var(--display); font-weight: 300; font-size: clamp(22px, 2.4vw, 32px); line-height: 1.25; text-align: center; max-width: 34ch; margin: clamp(40px, 5vw, 64px) auto 0; text-wrap: balance; }
 .cream .closing-line { color: var(--cream-ink); }
-.closing-line strong { font-weight: 500; color: #8a6a35; }
+.closing-line strong { font-weight: 500; color: var(--bronze-soft); }
 @media (max-width: 860px) { .recognition .split > .section-head { margin-bottom: 18px; } }
 
 /* Life copy sits straight after the Ella photo, no extra gap */
@@ -859,11 +859,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
   .vsl-caption { letter-spacing: 0.06em; font-size: 12px; }
   .btn-lg { padding: 18px 14px; font-size: 13.5px; letter-spacing: 0.14em; }
 }
-/* Sam's card: blank photo panel so every testimonial card has the same shape */
-.quote .q-private { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: default; background: repeating-linear-gradient(135deg, #141413 0 12px, #181817 12px 24px); border-bottom: 1px solid var(--line); text-align: center; padding: 20px; }
-.quote .q-private::before, .quote .q-private::after { content: none; }
-.q-private b { font-family: var(--display); font-weight: 500; font-size: 20px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--bronze); padding-left: 0.24em; }
-.q-private span { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); max-width: 24ch; line-height: 1.5; }
 
 /* Phones: one complete, centred testimonial per swipe (no half-cut neighbour); 2 full cards up to tablet width */
 @media (max-width: 600px) {
@@ -1058,7 +1053,8 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 /* 24 Oct (Cameron's Loom): About photos blend into the page instead of sitting in a box */
 .about-c-media { border: 0; background: transparent; }
-.about-slides {
+.about-slides-mask {   /* the fade lives on a non-scrolling wrapper: masked scroll containers flicker on iOS */
+  position: absolute; inset: 0;
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
@@ -1067,10 +1063,83 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px s
 
 /* 24 Oct: cream bands to break up the black: the 'You already have enough to manage' bridge and the final Apply section */
 .bridge-sec .bridge { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
-.bridge-sec .bridge-line strong { color: #8a6a35; }
+.bridge-sec .bridge-line strong { color: var(--bronze-soft); }
 .final-cta { background: var(--cream); color: var(--cream-ink); }
 .final-cta h2, .final-cta .h2 { color: var(--cream-ink); }
 .final-cta .lede, .final-cta p { color: #4a4238; }
 .final-cta .cta-sub { color: #6b6257; }
 .final-cta .btn { background: var(--cream-ink); border-color: var(--cream-ink); color: var(--cream); }
 .final-cta .btn:hover { background: #2a241d; border-color: #2a241d; }
+
+/* 25 Oct (Cameron: "quicker transition"): strict alternation, black / cream / black / cream down the page.
+   Cream sections swap the text and line colours; dark panels (cards, diagram) keep their dark look inside them. */
+.tone-cream { --white: #1a1612; --body-text: #4a4238; --muted: #6b6257; --bronze: #7a5b2a; --bronze-soft: #7a5b2a; --line: rgba(122, 91, 42, 0.32); --rule: rgba(26, 22, 18, 0.14); background: var(--cream); color: var(--cream-ink); }
+.section.tone-cream, .tone-cream + .section, .section + .tone-cream { border-top-color: transparent; }
+.testi-sec.tone-cream { background: var(--cream); }
+.tone-cream .strip-btn { border-color: rgba(26, 22, 18, 0.3); }
+.tone-cream .strip-btn:hover { border-color: #7a5b2a; color: #7a5b2a; }
+.tone-cream .btn { background: var(--cream-ink); border-color: var(--cream-ink); color: var(--cream); }
+.tone-cream .btn:hover { background: #2c261f; border-color: #2c261f; }
+.tone-cream .btn-wall-all { box-shadow: 0 10px 30px rgba(26, 22, 18, 0.22); }
+.tone-cream .t-dot { background: var(--cream); }
+
+/* Engagement was cream; it is the black band in the alternation, so it gets its dark look back */
+.engagement.tone-dark { background: transparent; color: var(--body-text); }
+.engagement.tone-dark h2, .engagement.tone-dark h3, .engagement.tone-dark .pull { color: var(--white); }
+.engagement.tone-dark .eyebrow { color: var(--bronze); }
+.engagement.tone-dark .lede, .engagement.tone-dark p { color: var(--body-text); }
+.engagement.tone-dark .pull strong { color: var(--bronze-soft); }
+.engagement.tone-dark .btn { background: var(--bronze); border-color: var(--bronze); color: var(--black); }
+.engagement.tone-dark .btn:hover { background: var(--bronze-soft); border-color: var(--bronze-soft); }
+.engagement.tone-dark .quiet { color: var(--muted); }
+.engagement.tone-dark .tiers { background: var(--rule); border-color: var(--rule); }
+.engagement.tone-dark .tier { background: var(--ink); }
+.engagement.tone-dark .tier.flagship { background: #181817; }
+.engagement.tone-dark .tier-tag { color: var(--bronze-soft); border-color: rgba(184, 155, 106, 0.5); }
+.engagement.tone-dark .tier ul, .engagement.tone-dark .tier li { border-color: rgba(255, 255, 255, 0.1); }
+.engagement.tone-dark .tier li, .engagement.tone-dark .included li { color: var(--body-text); }
+.engagement.tone-dark .included li { border-color: rgba(255, 255, 255, 0.18); }
+.engagement.tone-dark .engage-note { color: var(--bronze-soft) !important; }
+
+/* 25 Oct: the wall now has 38 cards. Three across on desktop, and a short last row sits centred instead of stranded on the left */
+@media (min-width: 861px) {
+  .wall { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .wall figure { grid-column: span 2; }
+  .wall.all figure:nth-last-of-type(2):nth-of-type(3n+1) { grid-column: 2 / span 2; }
+  .wall.all figure:last-of-type:nth-of-type(3n+2) { grid-column: 4 / span 2; }
+  .wall.all figure:last-of-type:nth-of-type(3n+1) { grid-column: 3 / span 2; }
+}
+.engagement.tone-dark .guarantee { background: var(--ink); border: 1px solid var(--line); border-top: 3px solid var(--bronze); }
+.engagement.tone-dark .guarantee p:last-child { color: var(--muted) !important; }
+
+/* 25 Oct: cream sections are cream all the way. Cards are a lighter cream with dark text, no black boxes behind the photos */
+.tone-cream :is(.quote, .case, .standard, .steps4 li, .wall figure, .protocol-diagram) { background: #f9f3e3; }
+.tone-cream :is(.quote, .case, .wall figure) { border: 1px solid rgba(26, 22, 18, 0.12); box-shadow: 0 12px 34px rgba(26, 22, 18, 0.08); }
+.tone-cream .steps4, .tone-cream .standards, .tone-cream .protocol-diagram { border-color: rgba(26, 22, 18, 0.14); box-shadow: 0 12px 34px rgba(26, 22, 18, 0.06); }
+.tone-cream .steps4, .tone-cream .standards { background: rgba(26, 22, 18, 0.14); }
+.tone-cream .case-testi { border-color: rgba(26, 22, 18, 0.28); }
+.tone-cream .case { padding: clamp(18px, 2.4vw, 32px); }
+.tone-cream .case-copy { padding: clamp(22px, 2.8vw, 42px); }
+.tone-cream .case-nums.four b { font-size: clamp(18px, 1.8vw, 26px); }
+
+/* 25 Oct audit: menu links land below the fixed header; the strip never bounces the page sideways */
+html { scroll-padding-top: 96px; }
+@media (max-width: 860px) { html { scroll-padding-top: 76px; } }
+.quotes-strip { overscroll-behavior-x: contain; }
+.lightbox img { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+/* 25 Oct audit: comfortable thumb targets for the viewer's close button and the header logo */
+.lightbox .lb-close { min-width: 44px; min-height: 44px; display: grid; place-items: center; top: 12px; right: 12px; }
+.logo { padding: 10px 0; margin: -10px 0; }
+
+/* 25 Oct: the portrait stage photo is narrower than its box, so it gets its own edge fade on all four sides (like the first photo) instead of hard edges */
+.about-slide-full img {
+  left: 50%; right: auto; width: auto; max-width: 100%; height: 100%;
+  transform: translateX(-50%); object-fit: cover;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* 25 Oct: once scrolled, the header's backdrop blur made it the box the full-screen menu is sized to, so the open menu was only header-high and its links spilled over the page. No blur while the menu is open. */
+.nav.open { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }

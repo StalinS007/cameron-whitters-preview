@@ -32,8 +32,9 @@
     const y = window.scrollY;
     nav.classList.toggle("scrolled", y > 40);   // #26: on mobile the header also shrinks (CSS)
     const pastHero = heroBtn ? heroBtn.getBoundingClientRect().bottom < 0 : y > hero.offsetHeight - 120;
-    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open");
-    sticky.classList.toggle("show", pastHero && visibleCtas.size === 0 && !overlayOpen);
+    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open");   // menu or viewer
+    const ctaOnScreen = inlineCtas.some((b) => { const r = b.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; });   // measured directly: never a frame late
+    sticky.classList.toggle("show", pastHero && !ctaOnScreen && !overlayOpen);
   };
   inlineCtas.forEach((b) => ctaIo.observe(b));
   onScroll();
@@ -60,24 +61,72 @@
   );
   $$(".reveal").forEach((el) => io.observe(el));
 
-  /* ---------- Proof strip arrows (#3) ---------- */
-  // Each arrow scrolls the strip named in data-target (default: the proof strip).
-  $$(".strip-btn").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      const strip = $(btn.dataset.target || "#proofStrip");
-      if (!strip) return;
-      const tile = strip.querySelector("figure, blockquote");
-      const gap = parseFloat(getComputedStyle(strip).columnGap) || 0;
-      const step = tile ? tile.getBoundingClientRect().width + gap : 300;
-      // Guide: arrows advance and snap to one complete card
-      strip.scrollBy({ left: Number(btn.dataset.dir) * step, behavior: reduceMotion ? "auto" : "smooth" });
-    })
-  );
+  /* ---------- Testimonial strip: a seamless loop.
+     The last three cards are cloned in front and the first three after, so the strip never has an end.
+     The browser's own snapping stays on the whole time (so swiping and the arrows feel identical). When the strip
+     settles on a clone it is moved, with no animation, to the matching real card: the picture is identical, so nothing visibly changes. ---------- */
+  $$(".quotes-strip").forEach((strip) => {
+    const real = $$(":scope > blockquote, :scope > figure", strip);
+    if (real.length < 2) return;
+    const K = Math.min(3, real.length);
+    const ready = (img) => { img.loading = "eager"; const dec = () => { if (img.decode) img.decode().catch(() => {}); }; img.complete ? dec() : img.addEventListener("load", dec, { once: true }); };
+    const clone = (card, i) => {
+      const c = card.cloneNode(true);
+      c.removeAttribute("id"); c.dataset.clone = String(i); c.setAttribute("aria-hidden", "true");
+      $$("img", c).forEach(ready);
+      return c;
+    };
+    // Front copies: the last K cards, inserted so they read ...Meylad, Michael, Stefan, then the real Jourdon (insert in reverse, each at the very front)
+    for (let i = real.length - K; i < real.length; i++) strip.insertBefore(clone(real[i], i), strip.children[i - (real.length - K)] || null);
+    // End copies: the first K cards, in order
+    real.slice(0, K).forEach((card, j) => strip.appendChild(clone(card, j)));
+    // Every card must already be loaded and decoded before it can be stepped or jumped to, so no card ever appears mid-load
+    real.forEach((card) => $$("img", card).forEach(ready));
+    const pitch = () => real[1].getBoundingClientRect().left - real[0].getBoundingClientRect().left;
+    const span = () => pitch() * real.length;                       // width of the eight real cards
+    const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+    strip.scrollLeft = pos(real[0]);                                 // start on the first real card
+    // After any scroll settles on a clone, jump (instantly) to the real card it copies.
+    let settle, heading = null, current = 0;   // heading = where the strip is on its way to (null once it has arrived); current = the real card in view
+    const fix = () => {
+      const x = strip.scrollLeft, first = pos(real[0]), last = pos(real[real.length - 1]);
+      if (x < first - 2) strip.scrollLeft = x + span();
+      else if (x > last + 2) strip.scrollLeft = x - span();
+      heading = null;
+      current = ((Math.round((strip.scrollLeft - pos(real[0])) / pitch()) % real.length) + real.length) % real.length;
+      // iOS can ignore a position set while its own snap animation is still running: check once more shortly after
+      requestAnimationFrame(() => { const y = strip.scrollLeft; if (y < pos(real[0]) - 2 || y > pos(real[real.length - 1]) + 2) setTimeout(fix, 150); });
+    };
+    strip.addEventListener("scroll", () => { clearTimeout(settle); settle = setTimeout(fix, 120); }, { passive: true });
+    if ("onscrollend" in strip) strip.addEventListener("scrollend", fix);
+    // Arrows: one card per click, measured from where the strip is heading, so taps queue up cleanly even on a slow phone
+    $$('.strip-btn[data-target="#' + strip.id + '"]').forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const dir = Number(btn.dataset.dir), p = pitch();
+        const first = pos(real[0]), last = pos(real[real.length - 1]);
+        let from = heading == null ? strip.scrollLeft : heading;
+        if (from < first - 2) from += span(); else if (from > last + 2) from -= span();   // normalise onto the real cards
+        if (Math.abs(from - strip.scrollLeft) > p * (K - 1)) { strip.scrollLeft = from; }    // land there now if a wrap is needed first
+        heading = Math.round(from / p) * p + dir * p;
+        strip.scrollTo({ left: heading, behavior: reduceMotion ? "auto" : "smooth" });
+      })
+    );
+    // Keep the visitor's place when the width really changes (phones fire resize just from the address bar collapsing)
+    let lastW = window.innerWidth;
+    let rz;
+    const realign = () => { strip.scrollLeft = pos(real[current]); heading = null; };   // same card, re-aligned for the new width
+    window.addEventListener("resize", () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      realign();
+      clearTimeout(rz); rz = setTimeout(realign, 200);   // and again once the rotated layout has settled
+    });
+  });
 
   /* ---------- VSL: our own player. The poster and bronze play button show until the first click,
      then the hosted 1080p file plays in place with the browser's own controls (sound allowed: it starts from a click) ---------- */
   const vsl = $("#vsl");
-  const VSL_SRC = "assets/video/cameron-vsl-1080p.mp4?v=20261024";
+  const VSL_SRC = "assets/video/cameron-vsl-1080p.mp4?v=20261025";
   const playVsl = () => {
     if (vsl.classList.contains("played")) return;
     track("vsl_play");
@@ -155,10 +204,13 @@
     lbImg.alt = img.alt;
     lbCap.textContent = el.dataset.lb;
   };
-  $$("[data-lb]").forEach((el) =>
-    el.addEventListener("click", () => {
+  $$("[data-lb]").forEach((trigger) =>
+    trigger.addEventListener("click", () => {
+      let el = trigger;
+      const cl = el.closest("[data-clone]");   // a cloned testimonial card stands in for its real one
+      if (cl) { const realCard = $$(":scope > :not([data-clone])", cl.parentElement)[Number(cl.dataset.clone)]; el = (realCard && $("[data-lb]", realCard)) || el; }
       const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases, .about-c-media");
-      group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null) : [el];
+      group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null && !g.closest("[data-clone]")) : [el];
       if (!group.includes(el)) group = [el];
       lb.classList.toggle("single", group.length < 2);
       show(group.indexOf(el));
@@ -168,6 +220,13 @@
     })
   );
   const closeLb = () => { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); onScroll(); };
+  let tx = null;
+  lb.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener("touchend", (e) => {
+    if (tx == null) return;
+    const dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 40 && group.length > 1) { show(dx < 0 ? idx + 1 : idx - 1); e.preventDefault(); }
+  });
   lb.addEventListener("click", (e) => { if (!e.target.closest(".lb-nav")) closeLb(); });
   $(".lb-prev", lb).addEventListener("click", () => show(idx - 1));
   $(".lb-next", lb).addEventListener("click", () => show(idx + 1));

@@ -5,8 +5,8 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="origin">
-  <!-- Added: real consent adapter (window.CWConsent), resolved synchronously before the module below imports bootstrap. -->
-  <script src="../assets/js/consent.js?v=20261024a"></script>
+  <!-- Added: Meta Pixel loader and the window.CWConsent adapter, resolved synchronously before the module below imports bootstrap. -->
+  <script src="../assets/js/consent.js?v=20261026-pixel-all-1"></script>
   <title>Apply to Work With Cameron</title>
   <meta name="description" content="Apply for a private six-month physique and performance transformation with Cameron Whitters.">
   <link rel="stylesheet" href="https://embed.typeform.com/next/css/widget.css">
@@ -34,11 +34,11 @@
     <div id="status" role="status" aria-live="polite"></div>
     <div id="application" aria-label="Private Executive Transformation application"></div>
     <noscript><p class="fallback">JavaScript is required for the embedded application. <a href="https://rll9wh9lcjp.typeform.com/to/epGkkctg" rel="noreferrer">Open the application</a>.</p></noscript>
-    <p class="cw-cookie-link"><a href="#" data-cookie-settings>Cookie settings</a> · <a href="../privacy/">Privacy</a></p>
+    <p class="cw-cookie-link"><a href="../privacy/">Privacy</a></p>
   </main>
   <script type="module">
-    import { attribution } from '../cw-site-bootstrap.mjs';
-    import { mountApplication } from '../cw-application.mjs';
+    import { attribution } from '../cw-site-bootstrap.mjs?v=20261026-pixel-all-1';
+    import { mountApplication } from '../cw-application.mjs?v=20261026-pixel-all-1';
     import { hostConfig } from '../host-config.mjs';
     const status = document.querySelector('#status');
     try {
@@ -58,12 +58,12 @@
         enableMetaSubmission: hostConfig.enableMetaSubmission,
         onDiagnostic: ({ code }) => {
           console.warn('[CW application]', code);
-          if (code === 'consent_revoked_form_restarted') {
-            status.textContent = 'Your privacy preference changed. The application has restarted without advertising attribution.';
+          if (code === 'consent_revoked_form_restarted' || code === 'consent_granted_form_restarted') {
+            status.textContent = 'Your privacy preference changed. The application has restarted with your updated cookie choice. Please enter your answers again.';
           }
         },
       });
-      // Added: the site's consent-controlled Pixel starts only after bootstrap has captured and cleaned the URL.
+      // Added: the Pixel starts only after bootstrap has captured and cleaned the URL.
       window.CWReleasePixel && window.CWReleasePixel();
     } catch {
       status.textContent = 'The application could not load. Please refresh this page or try again shortly.';
