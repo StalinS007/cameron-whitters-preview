@@ -8,8 +8,9 @@
   <meta name="description" content="A private six-month physique and performance transformation for founders, business owners and executives. Personally managed by Cameron Whitters, around your work, travel and family. By application." />
   <meta name="theme-color" content="#0b0b0b" />
   <meta name="referrer" content="origin" />
-  <!-- Cookie consent + Meta Pixel gate. Must load first (Cameron's integration package). -->
-  <script src="assets/js/consent.js?v=20261024a"></script>
+  <!-- Meta Pixel loader and the consent adapter Cameron's integration package expects. Must load first. -->
+  <script src="assets/js/consent.js?v=20261026-matching-1"></script>
+  <script src="assets/js/analytics.js?v=20261028-analytics-1"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -406,7 +407,7 @@
     <div class="footer-words">Physical · Performance · Lifestyle</div>
     <div class="wrap">
       <span>© <span id="yr">2026</span> Cameron Whitters</span>
-      <nav><a href="privacy/">Privacy</a><a href="terms/">Terms</a><a href="#" data-cookie-settings>Cookie settings</a></nav>
+      <nav><a href="privacy/">Privacy</a><a href="terms/">Terms</a></nav>
     </div>
   </footer>
 
@@ -418,9 +419,9 @@
     <div class="lb-cap" id="lbCap"></div>
   </div>
 
-  <!-- Campaign attribution (Cameron's package). Runs after the saved consent is known; the Pixel is released only afterwards and only with consent. -->
+  <!-- Campaign attribution (Cameron's package). Runs first; the Pixel is released afterwards, once the URL is clean. -->
   <script type="module">
-    import './cw-site-bootstrap.mjs';
+    import './cw-site-bootstrap.mjs?v=20261026-matching-1';
     window.CWReleasePixel && window.CWReleasePixel();
   </script>
   <script src="assets/js/main.js?v=20261025l"></script>

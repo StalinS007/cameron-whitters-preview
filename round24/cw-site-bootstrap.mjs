@@ -1,4 +1,4 @@
-import { createAttribution } from './cw-application.mjs';
+import { createAttribution } from './cw-application.mjs?v=20261026-matching-1';
 import { hostConfig } from './host-config.mjs';
 
 // Install the real host CMP bridge as window.CWConsent before importing this module.

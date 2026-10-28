@@ -32,7 +32,7 @@
     const y = window.scrollY;
     nav.classList.toggle("scrolled", y > 40);   // #26: on mobile the header also shrinks (CSS)
     const pastHero = heroBtn ? heroBtn.getBoundingClientRect().bottom < 0 : y > hero.offsetHeight - 120;
-    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open") || document.querySelector(".cwc");   // menu, viewer or cookie banner
+    const overlayOpen = nav.classList.contains("open") || document.querySelector(".lightbox.open");   // menu or viewer
     const ctaOnScreen = inlineCtas.some((b) => { const r = b.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; });   // measured directly: never a frame late
     sticky.classList.toggle("show", pastHero && !ctaOnScreen && !overlayOpen);
   };
