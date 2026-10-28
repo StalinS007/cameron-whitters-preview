@@ -36,20 +36,38 @@ function cookieValue(cookie, name) {
   try { return value ? decodeURIComponent(value.slice(name.length + 1)) : ''; }
   catch { return ''; }
 }
-function safeFbp(value) { return /^fb\.\d\.\d{13}\.\d{1,40}$/.test(value) ? value : ''; }
+// Valid Meta cookies are kept exactly as stored, including Meta Parameter Builder's optional suffix.
+function safeFbp(value) { return /^fb\.\d\.\d{13}\.\d{1,40}(\.[A-Za-z0-9_-]{1,64})?$/.test(value) ? value : ''; }
 function safeFbc(value) {
-  if (!/^fb\.\d\.\d{13}\.[A-Za-z0-9_-]{5,512}$/.test(value)) return '';
+  if (!/^fb\.\d\.\d{13}\.[A-Za-z0-9_-]{5,512}(\.[A-Za-z0-9_-]{1,64})?$/.test(value)) return '';
   return /(?:TEST_VALUE|PLACEHOLDER|TEST_CLICK)/i.test(value) ? '' : value;
 }
 function safeTime(value) {
   return typeof value === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(value)
     && Number.isFinite(Date.parse(value)) ? value : '';
 }
+// fbc for the latest touch: the Pixel's own cookie, unless a newer ad click arrived that the cookie
+// doesn't describe; then Meta's documented format, fb.1.<click time in ms>.<fbclid>, from the click
+// exactly as it arrived (case kept) and the time it first reached the site. Never invented.
+function clickId(fbc) { return fbc ? fbc.split('.')[3] || '' : ''; }
+function currentFbc(touch, cookieFbc) {
+  const click = touch && touch.fbclid;
+  const at = click && touch.fbclid_at ? Date.parse(touch.fbclid_at) : NaN;
+  if (cookieFbc && (!click || clickId(cookieFbc) === click)) return cookieFbc;
+  if (click && Number.isFinite(at)) return safeFbc(`fb.1.${at}.${click}`);
+  return cookieFbc || '';
+}
+// A repeat of the same click (reload, back button) keeps the time it first arrived.
+function keepClickTime(next, previous) {
+  if (next && previous && next.fbclid && next.fbclid === previous.fbclid && previous.fbclid_at) next.fbclid_at = previous.fbclid_at;
+  return next;
+}
 function cleanTouch(value, allowedPaths) {
   if (!value || !safeTime(value.captured_at)) return null;
   const result = {};
   for (const key of CAMPAIGN_KEYS) result[key] = safeLabel(value[key]);
   result.fbclid = safeId(value.fbclid);
+  result.fbclid_at = result.fbclid ? safeTime(value.fbclid_at) : '';
   result.fbp = safeFbp(value.fbp || '');
   result.fbc = safeFbc(value.fbc || '');
   result.landing_page = safePageUrl(value.landing_page, allowedPaths);
@@ -86,10 +104,10 @@ export function createAttribution({
     const touch = { captured_at: now() };
     for (const key of CAMPAIGN_KEYS) touch[key] = safeLabel(url.searchParams.get(key));
     touch.fbclid = safeId(url.searchParams.get('fbclid'));
+    touch.fbclid_at = touch.fbclid ? touch.captured_at : '';   // captured before cleanAddressBar() removes it
     let cookies = '';
     if (hasConsent()) { try { cookies = browser.document.cookie || ''; } catch {} }
     touch.fbp = safeFbp(cookieValue(cookies, '_fbp'));
-    // Do not manufacture _fbc from fbclid, including synthetic test click IDs.
     touch.fbc = safeFbc(cookieValue(cookies, '_fbc'));
     touch.landing_page = safePageUrl(url.href, allowedPaths);
     touch.original_referrer = referrer;
@@ -125,7 +143,9 @@ export function createAttribution({
         if (stored?.version === 1) {
           // Whole snapshot, including blank UTMs: a direct first visit stays direct.
           first = cleanTouch(stored.first, allowedPaths) || first;
-          if (observed.internal) latest = cleanTouch(stored.latest, allowedPaths) || latest;
+          const storedLatest = cleanTouch(stored.latest, allowedPaths);
+          if (observed.internal) latest = storedLatest || latest;
+          else keepClickTime(latest, storedLatest);
         }
         const ids = JSON.parse(storageGet(SENT_KEY) || '[]');
         if (Array.isArray(ids)) sent = new Set(ids.filter(safeId).slice(-100));
@@ -159,7 +179,7 @@ export function createAttribution({
     captureVisit() {
       syncConsent();
       observed = capture();
-      if (!observed.internal) latest = observed.touch;
+      if (!observed.internal) latest = keepClickTime(observed.touch, latest);
       persist();
     },
     hidden() {
@@ -168,9 +188,10 @@ export function createAttribution({
       if (!hasConsent()) return { marketing_consent: 'not_granted' };
       // Pixel may have become ready after the first page observation. First touch remains unchanged.
       try {
+        const cookies = browser.document.cookie || '';
         latest = { ...latest,
-          fbp: safeFbp(cookieValue(browser.document.cookie || '', '_fbp')),
-          fbc: safeFbc(cookieValue(browser.document.cookie || '', '_fbc')) };
+          fbp: safeFbp(cookieValue(cookies, '_fbp')),
+          fbc: currentFbc(latest, safeFbc(cookieValue(cookies, '_fbc'))) };
       } catch {}
       persist();
       const hidden = {};
@@ -180,7 +201,12 @@ export function createAttribution({
       }
       hidden.first_captured_at = first.captured_at;
       hidden.latest_captured_at = latest.captured_at;
-      hidden.marketing_consent = 'granted';
+      // Meta matching (26 Oct handover): the visitor's real browser string, read at mount time.
+      try { hidden.user_agent = String(browser.navigator?.userAgent || '').slice(0, 512); } catch { hidden.user_agent = ''; }
+      // Notice-based measurement (26 Oct): no opt-out mechanism on the site, so no known objection.
+      hidden.measurement_mode = 'notice_opt_out_v1';
+      hidden.measurement_opt_out = 'false';
+      hidden.marketing_consent = 'not_asked';   // No cookie banner since 26 Oct 2026: campaign details are sent for every applicant.
       hidden.consent_captured_at = grantTime;
       // Informational opaque reference only. The server must independently validate its record.
       try { hidden.consent_receipt = safeId(consent.getReceipt?.()); } catch { hidden.consent_receipt = ''; }
