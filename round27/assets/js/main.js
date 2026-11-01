@@ -129,7 +129,7 @@
   const VSL_SRC = "assets/video/cameron-vsl-1080p.mp4?v=20261025";
   const playVsl = () => {
     if (vsl.classList.contains("played")) return;
-    track("vsl_play");
+    track("vsl_play"); window.CWTrack && window.CWTrack("vsl_play");   // also to Clarity + GA4 (analytics.js)
     const v = document.createElement("video");
     v.src = VSL_SRC; v.controls = true; v.playsInline = true; v.preload = "auto";
     v.poster = $(".vsl-poster", vsl).currentSrc || $(".vsl-poster", vsl).src;
