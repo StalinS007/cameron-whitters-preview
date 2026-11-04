@@ -245,6 +245,8 @@ export function mountApplication({
   // Leave false until the real dataset and server canonical ID have been verified in Test Events.
   enableMetaSubmission = false,
   onSubmitted = () => {},
+  // Called each time the visitor reaches a question (Typeform's onQuestionChanged); carries only the question ref.
+  onQuestionChanged = () => {},
   onDiagnostic = () => {},
 }) {
   if (typeof createWidget !== 'function' || !container || !attribution) throw new Error('Missing embed dependency');
@@ -263,6 +265,11 @@ export function mountApplication({
       inlineOnMobile: true,
       hideFooter: false,
       autoFocus: false,
+      onQuestionChanged: ({ ref, formId: changedFormId } = {}) => {
+        if (destroyed || currentGeneration !== generation) return;
+        if (changedFormId && changedFormId !== formId) return;
+        try { onQuestionChanged({ ref: typeof ref === 'string' ? ref.slice(0, 64) : '' }); } catch { report('question_listener_failed'); }
+      },
       iframeProps: { title: 'Apply to work with Cameron', referrerPolicy: 'origin' },
       onSubmit: ({ responseId, formId: submittedFormId } = {}) => {
         if (destroyed || currentGeneration !== generation) return;

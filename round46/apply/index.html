@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="origin">
   <!-- Added: Meta Pixel loader and the window.CWConsent adapter, resolved synchronously before the module below imports bootstrap. -->
-  <script src="../assets/js/consent.js?v=20261026-matching-1"></script>
+  <script src="../assets/js/consent.js?v=20261104-formsteps-1"></script>
   <script src="../assets/js/analytics.js?v=20261028-analytics-2"></script>
   <title>Apply to Work With Cameron</title>
   <meta name="description" content="Apply for a concierge-level transformation with Cameron Whitters, Mr Australia 2026.">
@@ -39,8 +39,8 @@
     <p class="cw-cookie-link"><a href="../privacy/">Privacy</a></p>
   </main>
   <script type="module">
-    import { attribution } from '../cw-site-bootstrap.mjs?v=20261026-matching-1';
-    import { mountApplication } from '../cw-application.mjs?v=20261026-matching-1';
+    import { attribution } from '../cw-site-bootstrap.mjs?v=20261104-formsteps-1';
+    import { mountApplication } from '../cw-application.mjs?v=20261104-formsteps-1';
     import { hostConfig } from '../host-config.mjs';
     const status = document.querySelector('#status');
     // The Pixel starts before the Typeform loads, so its fresh _fbp/_fbc cookies can reach the form's
@@ -63,6 +63,13 @@
         formId: hostConfig.formId,
         enableMetaSubmission: hostConfig.enableMetaSubmission,
         onSubmitted: () => { window.CWTrack && window.CWTrack('application_submitted'); },
+        // Funnel inside the form: records that question N was reached (form_q1, form_q2, ...). No answers are read.
+        onQuestionChanged: (() => { const seen = []; return ({ ref }) => {
+          if (!ref) return;
+          let n = seen.indexOf(ref) + 1;
+          if (!n) { seen.push(ref); n = seen.length; }
+          window.CWTrack && window.CWTrack('form_q' + n, { question: String(n), question_ref: ref });
+        }; })(),
         onDiagnostic: ({ code }) => {
           console.warn('[CW application]', code);
           if (code === 'consent_revoked_form_restarted' || code === 'consent_granted_form_restarted') {
