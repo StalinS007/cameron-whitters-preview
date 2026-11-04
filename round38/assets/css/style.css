@@ -758,6 +758,8 @@ body { line-height: 1.62; }
 .steps4 b { font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: 0.22em; color: var(--bronze); }
 .steps4 h3 { font-size: 24px; font-weight: 500; margin: 10px 0 10px; }
 .steps4 p { margin: 0; font-size: 15px; line-height: 1.55; }
+.scope-head { font-family: var(--display); font-size: 12px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--bronze); text-align: center; margin: 0 0 16px; }
+.scope4 h3 { margin-top: 0; }
 .method .protocol-diagram { --pd-label: 280px; }
 .method .pd-label { display: block; font-family: var(--body); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--body-text); line-height: 1.35; padding-right: 18px; }
 .method .pd-label b { display: block; margin: 0 0 2px; font-family: var(--display); font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); }
