@@ -126,7 +126,7 @@
   /* ---------- VSL: our own player. The poster and bronze play button show until the first click,
      then the hosted 1080p file plays in place with the browser's own controls (sound allowed: it starts from a click) ---------- */
   const vsl = $("#vsl");
-  const VSL_SRC = "assets/video/cameron-vsl-1080p.mp4?v=20261025";
+  const VSL_SRC = "assets/video/cameron-vsl-1080p.mp4?v=20261104";
   const playVsl = () => {
     if (vsl.classList.contains("played")) return;
     track("vsl_play"); window.CWTrack && window.CWTrack("vsl_play");   // also to Clarity + GA4 (analytics.js)
