@@ -137,6 +137,15 @@
     vsl.appendChild(v);
     vsl.classList.add("played"); vsl.removeAttribute("role"); vsl.removeAttribute("tabindex"); vsl.removeAttribute("aria-label");
     v.addEventListener("ended", () => track("vsl_complete"), { once: true });
+    // How far people get: vsl_25 / vsl_50 / vsl_75 at those points of the video, vsl_end when it finishes (each once per play).
+    const reached = {};
+    const milestone = (name) => { if (reached[name]) return; reached[name] = true; window.CWTrack && window.CWTrack(name); };
+    v.addEventListener("timeupdate", () => {
+      if (!v.duration) return;
+      const pct = (v.currentTime / v.duration) * 100;
+      if (pct >= 75) milestone("vsl_75"); else if (pct >= 50) milestone("vsl_50"); else if (pct >= 25) milestone("vsl_25");
+    });
+    v.addEventListener("ended", () => milestone("vsl_end"), { once: true });
     const p = v.play();
     if (p && p.catch) p.catch(() => {});   // if the browser blocks it, the controls are already there to press play
   };
