@@ -3,6 +3,6 @@ export const hostConfig = {
   // Confirmed launch domain: https://www.cameronwhitters.com
   // The website developer must install this package on that domain.
   applyPath: '/apply/',
-  allowedPaths: ['/cameron-whitters-preview/round47/', '/cameron-whitters-preview/round47/apply', '/cameron-whitters-preview/round47/apply/', '/', '/apply', '/apply/'],
+  allowedPaths: ['/cameron-whitters-preview/round49/', '/cameron-whitters-preview/round49/apply', '/cameron-whitters-preview/round49/apply/', '/', '/apply', '/apply/'],
   enableMetaSubmission: false,
 };
