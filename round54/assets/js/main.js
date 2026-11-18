@@ -232,7 +232,8 @@
       let el = trigger;
       const cl = el.closest("[data-clone]");   // a cloned testimonial card stands in for its real one
       if (cl) { const realCard = $$(":scope > :not([data-clone])", cl.parentElement)[Number(cl.dataset.clone)]; el = (realCard && $("[data-lb]", realCard)) || el; }
-      const box = el.closest(".proof-strip, .wall, .quotes-strip, .cases, .about-c-media");
+      const box = el.closest(".hero-proof, .proof-strip, .wall, .quotes-strip, .cases, .about-c-media");
+      if (trigger.dataset.lbEvent) { track(trigger.dataset.lbEvent, { client: trigger.dataset.lb }); window.CWTrack && window.CWTrack(trigger.dataset.lbEvent); }   // first-screen client photos: taps go to Clarity + GA4
       group = box ? $$("[data-lb]", box).filter((g) => g.offsetParent !== null && !g.closest("[data-clone]")) : [el];
       if (!group.includes(el)) group = [el];
       lb.classList.toggle("single", group.length < 2);
