@@ -1148,3 +1148,42 @@ html { scroll-padding-top: 96px; }
 
 /* 25 Oct: once scrolled, the header's backdrop blur made it the box the full-screen menu is sized to, so the open menu was only header-high and its links spilled over the page. No blur while the menu is open. */
 .nav.open { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--black); }
+
+/* ===== First screen, Option 3 (Cameron's pick, 18 Nov): headline, video with Cameron on the cover, his title, Apply,
+   then the eight testimonial clients' photos. The whole pitch fits one phone screen (100svh), pieces spread evenly. ===== */
+.hero.hero-fs { display: flex; min-height: 100vh; min-height: 100svh; padding: 76px 0 16px; }
+.hero-fs .hero-stack { flex: 1; justify-content: space-between; gap: 10px; }
+.hero-fs .hero-stack > * { margin: 0; }
+.hero.hero-fs h1 { max-width: none; margin: 0; font-size: clamp(27px, 4.3vh, 36px); line-height: 1.07; }   /* two short lines (the Direct Callout ad's headline), so it can be larger than the four-line one was (22-27px) */
+.hero-fs h1 span { display: block; }
+.hero-fs .vsl { flex: none; }
+.hero-fs .vsl::after { background: linear-gradient(0deg, rgba(11,11,11,0.5), transparent 38%); }
+.vsl-watch { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; align-items: center; gap: 10px; white-space: nowrap; padding: 11px 16px 11px 13px; background: var(--bronze); color: var(--black); font-family: var(--display); font-size: 13px; font-weight: 500; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; box-shadow: 0 0 0 6px rgba(11,11,11,0.45); transition: background 0.25s var(--ease); }
+.vsl-watch i { width: 0; height: 0; border-left: 11px solid var(--black); border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+.vsl:hover .vsl-watch { background: var(--bronze-soft); }
+.vsl.played .vsl-watch { display: none; }
+.hero-title { font-family: var(--display); font-size: 13.5px; line-height: 1.3; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bronze); }
+.hero-title b { color: var(--white); font-weight: 500; }
+.hero-title span { display: block; margin-top: 5px; font-family: var(--body); font-size: 12px; line-height: 1.4; letter-spacing: 0.02em; text-transform: none; color: var(--bronze-soft); }
+.hero-fs .btn-lg { width: 100%; max-width: 960px; padding: 19px 10px; font-size: 15px; letter-spacing: 0.18em; }
+/* Client photos: a row that swipes sideways and runs off the right edge, so it is plain there are more. */
+.hero-proof { --p: clamp(96px, 16vh, 132px); display: flex; gap: 6px; align-self: stretch; margin-right: calc(-1 * var(--gutter)); padding-right: var(--gutter); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+@supports (height: 1svh) { .hero-proof { --p: clamp(96px, 16svh, 132px); } }
+.hero-proof::-webkit-scrollbar { display: none; }
+.hero-proof a { flex: 0 0 var(--p); width: var(--p); height: var(--p); overflow: hidden; background: #000; border: 1px solid var(--rule); }
+.hero-proof picture { display: block; width: 100%; height: 100%; }
+.hero-proof img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--ease); }
+.hero-proof a:hover img { transform: scale(1.04); }
+@media (max-width: 360px) { .hero-fs .btn-lg { font-size: 13.5px; letter-spacing: 0.12em; } .hero-title { font-size: 12.5px; letter-spacing: 0.1em; } }
+/* Wide screens: the same order, with all eight photos in one centred row and the video sized so the row still fits the screen. */
+@media (min-width: 861px) {
+  .hero.hero-fs { padding: 104px 0 26px; }
+  .hero-fs .hero-stack { gap: 16px; }
+  .hero.hero-fs h1 { font-size: clamp(34px, 6vh, 56px); }
+  .hero-fs .vsl { max-width: clamp(520px, calc((100vh - 548px) * 16 / 9), 960px); }
+  .vsl-watch { left: 18px; bottom: 18px; font-size: 14px; padding: 13px 20px 13px 16px; }
+  .hero-title { font-size: 16px; }
+  .hero-title span { font-size: 14px; }
+  .hero-fs .btn-lg { width: auto; padding: 21px 44px; letter-spacing: 0.22em; }
+  .hero-proof { --p: clamp(84px, 12.5vh, 112px); align-self: center; justify-content: center; gap: 8px; margin: 0; padding: 0; overflow: visible; }
+}

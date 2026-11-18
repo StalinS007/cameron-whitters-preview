@@ -70,18 +70,29 @@
     if (real.length < 2) return;
     const K = Math.min(3, real.length);
     const ready = (img) => { img.loading = "eager"; const dec = () => { if (img.decode) img.decode().catch(() => {}); }; img.complete ? dec() : img.addEventListener("load", dec, { once: true }); };
+    // Copies are built from a <template>: its images stay inert until the copy is in the page, so each one picks its WebP
+    // source like the real card (cloneNode would start downloading the plain JPEG straight away).
     const clone = (card, i) => {
-      const c = card.cloneNode(true);
+      const tpl = document.createElement("template");
+      tpl.innerHTML = card.outerHTML;
+      const c = tpl.content.firstElementChild;
       c.removeAttribute("id"); c.dataset.clone = String(i); c.setAttribute("aria-hidden", "true");
-      $$("img", c).forEach(ready);
       return c;
     };
     // Front copies: the last K cards, inserted so they read ...Meylad, Michael, Stefan, then the real Jourdon (insert in reverse, each at the very front)
     for (let i = real.length - K; i < real.length; i++) strip.insertBefore(clone(real[i], i), strip.children[i - (real.length - K)] || null);
     // End copies: the first K cards, in order
     real.slice(0, K).forEach((card, j) => strip.appendChild(clone(card, j)));
-    // Every card must already be loaded and decoded before it can be stepped or jumped to, so no card ever appears mid-load
-    real.forEach((card) => $$("img", card).forEach(ready));
+    // Every card must already be loaded and decoded before it can be stepped or jumped to, so no card ever appears mid-load.
+    // That happens as the strip nears the screen (or on the first touch of it), not at page load, so ~1.3 MB of photos
+    // no longer compete with the first taps and the video at the top of the page.
+    let warmed = false;
+    const warm = () => { if (warmed) return; warmed = true; $$("img", strip).forEach(ready); };
+    if ("IntersectionObserver" in window) {
+      const near = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { near.disconnect(); warm(); } }, { rootMargin: "1200px 0px" });
+      near.observe(strip);
+    } else warm();
+    strip.addEventListener("pointerdown", warm, { once: true });   // a swipe always starts here
     const pitch = () => real[1].getBoundingClientRect().left - real[0].getBoundingClientRect().left;
     const span = () => pitch() * real.length;                       // width of the eight real cards
     const pos = (el) => el.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
@@ -102,6 +113,7 @@
     // Arrows: one card per click, measured from where the strip is heading, so taps queue up cleanly even on a slow phone
     $$('.strip-btn[data-target="#' + strip.id + '"]').forEach((btn) =>
       btn.addEventListener("click", () => {
+        warm();
         const dir = Number(btn.dataset.dir), p = pitch();
         const first = pos(real[0]), last = pos(real[real.length - 1]);
         let from = heading == null ? strip.scrollLeft : heading;
@@ -163,7 +175,9 @@
       window.scrollTo({ top: strip.getBoundingClientRect().top + window.scrollY - 140, behavior });
       card.classList.add("testi-flash");
       setTimeout(() => card.classList.remove("testi-flash"), 2200);
-      track("case_testimonial_click", { client: a.dataset.testi });
+      const ev = a.dataset.testiEvent || "case_testimonial_click";   // "hero_photo_click" for the client photos on the first screen
+      track(ev, { client: a.dataset.testi });
+      if (a.dataset.testiEvent) window.CWTrack && window.CWTrack(ev);   // first-screen photo taps also go to Clarity + GA4
     })
   );
 
